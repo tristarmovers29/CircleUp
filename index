@@ -1,0 +1,1103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CircleUp — Connect With Everyone</title>
+
+<style>
+:root {
+  --blue:#2563eb;
+  --blue-dark:#1d4ed8;
+  --blue-light:#eff6ff;
+  --bg:#f4f7fb;
+  --white:#ffffff;
+  --text:#172033;
+  --muted:#718096;
+  --border:#e5eaf2;
+  --green:#16a34a;
+  --shadow:0 8px 30px rgba(25,45,85,.07);
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+button,input,textarea {font:inherit}
+button {cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible {
+  outline:3px solid #93c5fd;
+  outline-offset:2px;
+}
+.topbar {
+  height:72px;
+  background:white;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 5%;
+  position:sticky;
+  top:0;
+  z-index:50;
+  gap:18px;
+}
+.brand {
+  font-size:25px;
+  font-weight:800;
+  color:var(--blue);
+  letter-spacing:-1px;
+  white-space:nowrap;
+}
+.brand span {color:#172033}
+.search-box {
+  width:min(420px,40%);
+  background:#f4f7fb;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:11px 15px;
+  outline:none;
+}
+.top-right {display:flex;align-items:center;gap:12px}
+.account-name {font-size:13px;font-weight:bold}
+.avatar {
+  width:38px;height:38px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:#dbeafe;color:#1d4ed8;font-weight:bold;
+  overflow:hidden;flex-shrink:0;
+}
+.btn {
+  border:0;border-radius:10px;padding:11px 15px;
+  background:var(--blue);color:white;font-weight:bold;
+}
+.btn:hover {background:var(--blue-dark)}
+.btn-light {background:var(--blue-light);color:var(--blue)}
+.btn-light:hover {background:#dbeafe}
+.icon-btn {
+  border:1px solid var(--border);background:white;
+  padding:9px 12px;border-radius:10px;color:var(--text);
+}
+.layout {
+  max-width:1450px;margin:26px auto;padding:0 24px;
+  display:grid;grid-template-columns:220px minmax(0,1fr) 270px;
+  gap:24px;align-items:start;
+}
+.card {
+  background:white;border:1px solid var(--border);
+  border-radius:18px;box-shadow:var(--shadow);
+}
+.sidebar {padding:15px;position:sticky;top:95px}
+.nav-item {
+  width:100%;display:flex;align-items:center;gap:12px;
+  border:0;background:transparent;text-align:left;
+  padding:13px;border-radius:11px;color:#536176;
+  margin:3px 0;font-weight:600;
+}
+.nav-item:hover,.nav-item.active {background:var(--blue-light);color:var(--blue)}
+.nav-icon {width:22px;text-align:center;font-size:18px}
+.sidebar-note {padding:16px 12px;color:var(--muted);font-size:12px;line-height:1.6}
+.hero {
+  background:linear-gradient(115deg,#1d4ed8,#3b82f6 65%,#60a5fa);
+  color:white;border-radius:20px;padding:27px;margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.hero:after {
+  content:"";position:absolute;width:180px;height:180px;
+  border:35px solid rgba(255,255,255,.1);border-radius:50%;
+  right:-30px;top:-65px;
+}
+.hero h1 {margin:0 0 9px;font-size:27px;position:relative;z-index:1}
+.hero p {margin:0;color:#eaf2ff;line-height:1.6;position:relative;z-index:1}
+.section-title {font-size:19px;margin:0 0 16px}
+.composer {padding:20px;margin-bottom:20px}
+.composer-top {display:flex;gap:12px;align-items:flex-start}
+.composer textarea {
+  flex:1;min-width:0;resize:vertical;min-height:85px;
+  padding:13px;border:1px solid var(--border);border-radius:12px;
+  outline:none;
+}
+.composer textarea:focus,.comment-input:focus,.profile-field:focus {
+  border-color:#93c5fd;
+}
+.composer-bottom {
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;margin-top:13px;flex-wrap:wrap;
+}
+.upload-label {
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 12px;border:1px solid var(--border);
+  border-radius:10px;cursor:pointer;color:#526176;font-size:13px;
+}
+.upload-label input {display:none}
+.preview-image {max-width:100%;max-height:220px;border-radius:12px;margin-top:12px}
+.feed {display:flex;flex-direction:column;gap:17px}
+.post {padding:20px}
+.post-head {display:flex;align-items:center;gap:11px}
+.post-person {flex:1;min-width:0}
+.post-name {font-weight:750;font-size:14px}
+.post-time {font-size:12px;color:var(--muted);margin-top:5px}
+.post-message {line-height:1.7;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;margin:17px 0}
+.post-photo {width:100%;max-height:440px;object-fit:contain;background:#f8fafc;border-radius:13px}
+.post-stats {display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin:13px 0}
+.post-actions {display:flex;gap:10px;border-top:1px solid var(--border);padding-top:12px}
+.post-actions button {
+  flex:1;border:0;background:#f8fafc;border-radius:9px;
+  padding:10px;color:#56647a;font-weight:600;
+}
+.post-actions button:hover {background:var(--blue-light);color:var(--blue)}
+.post-actions button.liked {color:#e11d48;background:#fff1f2}
+.comments-section {margin-top:14px}
+.comment-list {display:flex;flex-direction:column;gap:10px}
+.comment-item {display:flex;gap:9px;align-items:flex-start}
+.comment-bubble {
+  background:#f4f7fb;border-radius:12px;padding:10px 12px;
+  min-width:0;flex:1;overflow-wrap:anywhere;
+}
+.comment-author {font-weight:bold;font-size:12px;margin-bottom:5px}
+.comment-text {font-size:13px;line-height:1.5;white-space:pre-wrap}
+.comment-empty {font-size:12px;color:var(--muted);padding:5px 0 12px}
+.comment-form {display:flex;gap:8px;margin-top:13px}
+.comment-input {
+  min-width:0;flex:1;padding:11px 12px;border:1px solid var(--border);
+  border-radius:10px;outline:none;
+}
+.comment-submit {border:0;border-radius:10px;background:var(--blue);color:white;padding:0 15px;font-weight:bold}
+.right-card {padding:19px;margin-bottom:18px}
+.right-title {font-size:15px;font-weight:bold;margin-bottom:15px}
+.person-row {display:flex;align-items:center;gap:10px;margin:15px 0}
+.person-info {flex:1;min-width:0}
+.person-info strong {display:block;font-size:12px}
+.person-info span {font-size:11px;color:var(--muted);display:block;margin-top:4px}
+.follow-btn {
+  border:1px solid #bfdbfe;background:white;color:var(--blue);
+  border-radius:8px;padding:7px 9px;font-size:11px;font-weight:bold;
+}
+.follow-btn.following {background:var(--blue-light)}
+.stat-row {display:flex;justify-content:space-between;margin:13px 0;font-size:13px}
+.stat-row span {color:var(--muted)}
+.empty-state {padding:35px 15px;text-align:center;color:var(--muted);line-height:1.7}
+.empty-state strong {display:block;color:var(--text);margin-bottom:8px}
+.notification-wrap {position:relative}
+.notification-bell {
+  position:relative;width:42px;height:42px;border-radius:12px;
+  border:1px solid var(--border);background:white;font-size:20px;color:#334155;
+}
+.notification-bell:hover {background:var(--blue-light);color:var(--blue)}
+.notification-badge {
+  position:absolute;top:-6px;right:-6px;background:#ef4444;color:white;
+  border:2px solid white;border-radius:20px;min-width:19px;height:19px;
+  padding:0 4px;font-size:10px;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;
+}
+.notification-panel {
+  display:none;position:absolute;right:0;top:52px;width:350px;max-width:calc(100vw - 25px);
+  background:white;border:1px solid var(--border);border-radius:16px;
+  box-shadow:0 18px 50px rgba(15,23,42,.18);overflow:hidden;z-index:100;
+}
+.notification-panel.open {display:block}
+.notification-head {
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px;border-bottom:1px solid var(--border);gap:8px;
+}
+.notification-head strong {font-size:15px}
+.text-button {border:0;background:transparent;color:var(--blue);font-size:11px;font-weight:bold;padding:5px}
+.notification-list {max-height:360px;overflow-y:auto}
+.notification-item {
+  display:flex;align-items:flex-start;gap:11px;padding:13px 15px;
+  border-bottom:1px solid #f0f3f8;cursor:pointer;
+}
+.notification-item:hover {background:#f8fbff}
+.notification-item.unread {background:#eff6ff}
+.notification-icon {
+  width:37px;height:37px;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;background:#dbeafe;flex-shrink:0;font-size:17px;
+}
+.notification-copy {flex:1;min-width:0}
+.notification-copy strong {display:block;font-size:12px;margin:2px 0 5px}
+.notification-copy p {margin:0;color:#64748b;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.notification-time {font-size:10px;color:#94a3b8;margin-top:6px}
+.notification-empty {padding:28px 15px;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
+.notification-actions {padding:10px;text-align:center;border-top:1px solid var(--border)}
+.notification-actions button {border:0;background:transparent;color:#64748b;font-size:12px;font-weight:bold;padding:6px}
+.notification-actions button:hover {color:#dc2626}
+.modal-backdrop {
+  display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);
+  z-index:200;align-items:center;justify-content:center;padding:20px;
+}
+.modal-backdrop.open {display:flex}
+.modal {width:100%;max-width:430px;background:white;border-radius:18px;padding:23px;box-shadow:var(--shadow)}
+.modal-head {display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal-head h2 {margin:0;font-size:20px}
+.close-btn {border:0;background:#f1f5f9;border-radius:9px;padding:8px 11px}
+.profile-field {width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;margin:7px 0 15px;outline:none}
+.modal label {font-size:12px;font-weight:bold;color:#536176}
+.profile-cover {padding:24px;background:linear-gradient(120deg,#1d4ed8,#60a5fa);border-radius:14px;color:white;margin-bottom:15px}
+.profile-cover h2 {margin:0 0 6px}
+.toast {
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  background:#172033;color:white;padding:13px 18px;border-radius:12px;
+  box-shadow:var(--shadow);font-size:13px;z-index:300;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+  max-width:90%;text-align:center;
+}
+.toast.show {opacity:1}
+.footer {text-align:center;color:#94a3b8;font-size:11px;padding:25px 10px}
+.hidden {display:none!important}
+
+@media(max-width:1100px) {
+  .layout {grid-template-columns:190px minmax(0,1fr)}
+  .right-sidebar {display:none}
+}
+@media(max-width:700px) {
+  .topbar {height:64px;padding:0 12px;gap:9px}
+  .brand {font-size:21px}
+  .search-box {display:none}
+  .account-name {display:none}
+  .layout {display:block;margin:15px auto;padding:0 12px}
+  .left-sidebar {position:static;margin-bottom:15px}
+  .sidebar {display:flex;position:static;overflow-x:auto;padding:7px;gap:4px}
+  .nav-item {width:auto;white-space:nowrap;padding:10px;font-size:12px}
+  .nav-icon {width:auto}
+  .sidebar-note {display:none}
+  .hero {padding:22px}
+  .hero h1 {font-size:23px}
+  .composer,.post {padding:15px}
+  .notification-panel {right:-52px}
+  .post-actions button {font-size:12px;padding:10px 5px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="brand">Circle<span>Up</span></div>
+  <input id="searchInput" class="search-box" placeholder="Search posts or people..." aria-label="Search posts or people">
+
+  <div class="top-right">
+    <div class="notification-wrap">
+      <button id="notificationBtn" class="notification-bell" type="button" aria-label="Notifications" title="Notifications">
+        ♧
+        <span id="notificationBadge" class="notification-badge hidden">0</span>
+      </button>
+
+      <div id="notificationPanel" class="notification-panel">
+        <div class="notification-head">
+          <strong>Notifications</strong>
+          <button id="markReadBtn" class="text-button" type="button">Mark all read</button>
+        </div>
+        <div id="notificationList" class="notification-list"></div>
+        <div class="notification-actions">
+          <button id="clearNotificationsBtn" type="button">Clear all notifications</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="topAvatar" class="avatar">Y</div>
+    <span id="topName" class="account-name">Your Profile</span>
+    <button class="btn btn-light" type="button" onclick="openProfileModal()">Edit Profile</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="left-sidebar">
+    <div class="card sidebar">
+      <button class="nav-item active" data-page="home" type="button"><span class="nav-icon">⌂</span> Home Feed</button>
+      <button class="nav-item" data-page="profile" type="button"><span class="nav-icon">♙</span> My Profile</button>
+      <button class="nav-item" data-page="community" type="button"><span class="nav-icon">♧</span> Community</button>
+      <button class="nav-item" id="sidebarNotifications" type="button"><span class="nav-icon">♧</span> Notifications</button>
+      <div class="sidebar-note">Share your moments, discover new people, and build your community on CircleUp.</div>
+    </div>
+  </aside>
+
+  <main>
+    <section id="homePage">
+      <div class="hero">
+        <h1>Connect with your world.</h1>
+        <p>Your space to share ideas, post moments, and connect with people who matter.</p>
+      </div>
+
+      <section class="card composer">
+        <h2 class="section-title">Create a post</h2>
+        <div class="composer-top">
+          <div id="composerAvatar" class="avatar">Y</div>
+          <textarea id="postMessage" placeholder="What's on your mind? Share something with your community..." maxlength="3000"></textarea>
+        </div>
+        <div id="imagePreviewContainer"></div>
+        <div class="composer-bottom">
+          <label class="upload-label">
+            <span>▧ Add photo</span>
+            <input id="postPhoto" type="file" accept="image/*">
+          </label>
+          <button id="publishBtn" class="btn" type="button">Publish Post ↗</button>
+        </div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:10px">Demo version: posts and images are saved in this browser only.</div>
+      </section>
+
+      <h2 class="section-title">Your Feed</h2>
+      <div id="feed" class="feed"></div>
+    </section>
+
+    <section id="profilePage" class="hidden">
+      <div class="card" style="padding:20px;margin-bottom:20px">
+        <div class="profile-cover">
+          <h2 id="profileHeading">Your Profile</h2>
+          <div id="profileBioHeading">Welcome to CircleUp.</div>
+        </div>
+        <button class="btn btn-light" type="button" onclick="openProfileModal()">Edit Profile</button>
+      </div>
+      <h2 class="section-title">My Posts</h2>
+      <div id="profilePosts" class="feed"></div>
+    </section>
+
+    <section id="communityPage" class="hidden">
+      <div class="hero">
+        <h1>Meet your community.</h1>
+        <p>Discover people and follow their demo profiles.</p>
+      </div>
+      <div id="communityList" class="card" style="padding:20px"></div>
+    </section>
+  </main>
+
+  <aside class="right-sidebar">
+    <div class="card right-card">
+      <div class="right-title">People you may know</div>
+      <div id="suggestedPeople"></div>
+    </div>
+    <div class="card right-card">
+      <div class="right-title">Your CircleUp activity</div>
+      <div class="stat-row"><span>Your posts</span><strong id="statPosts">0</strong></div>
+      <div class="stat-row"><span>Total likes</span><strong id="statLikes">0</strong></div>
+      <div class="stat-row"><span>Comments</span><strong id="statComments">0</strong></div>
+      <div class="stat-row"><span>Following</span><strong id="statFollowing">0</strong></div>
+    </div>
+    <div class="card right-card">
+      <div class="right-title">Welcome to CircleUp</div>
+      <div style="color:#718096;font-size:12px;line-height:1.7">This is a local demo. Real online accounts, remote notifications, and cross-device sharing need a connected backend.</div>
+    </div>
+  </aside>
+</div>
+
+<div class="footer">CircleUp © 2026 · Connect. Share. Belong.</div>
+
+<div id="profileModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Edit your profile</h2>
+      <button class="close-btn" type="button" onclick="closeProfileModal()">✕</button>
+    </div>
+    <form id="profileForm">
+      <label for="profileNameInput">Your name</label>
+      <input id="profileNameInput" class="profile-field" maxlength="60" required placeholder="Enter your name">
+
+      <label for="profileBioInput">About you</label>
+      <textarea id="profileBioInput" class="profile-field" maxlength="250" rows="3" placeholder="Tell people a little about yourself"></textarea>
+
+      <button class="btn" style="width:100%" type="submit">Save Profile</button>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+const POSTS_KEY = "circleupPosts";
+const NAME_KEY = "circleupName";
+const BIO_KEY = "circleupBio";
+const FOLLOWING_KEY = "circleupFollowing";
+const NOTIFICATIONS_KEY = "circleupNotifications";
+
+let selectedPhoto = "";
+let currentPage = "home";
+let searchTerm = "";
+
+const demoPeople = [
+  {name:"Ayesha Khan", bio:"Creative mind ✨"},
+  {name:"Ahmed Raza", bio:"Technology enthusiast"},
+  {name:"Sara Malik", bio:"Photography & travel"},
+  {name:"Ali Hassan", bio:"Building new ideas"},
+  {name:"Maya Noor", bio:"Life, learning & stories"}
+];
+
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, function(char) {
+    return {
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[char];
+  });
+}
+
+function currentName() {
+  return localStorage.getItem(NAME_KEY) || "Your Name";
+}
+
+function currentBio() {
+  return localStorage.getItem(BIO_KEY) || "Welcome to my CircleUp profile.";
+}
+
+function getPosts() {
+  try {
+    const data = JSON.parse(localStorage.getItem(POSTS_KEY) || "[]");
+    return Array.isArray(data) ? data : [];
+  } catch(error) {
+    return [];
+  }
+}
+
+function savePosts(posts) {
+  localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
+}
+
+function getFollowing() {
+  try {
+    const data = JSON.parse(localStorage.getItem(FOLLOWING_KEY) || "[]");
+    return Array.isArray(data) ? data : [];
+  } catch(error) {
+    return [];
+  }
+}
+
+function saveFollowing(list) {
+  localStorage.setItem(FOLLOWING_KEY, JSON.stringify(list));
+}
+
+function getNotifications() {
+  try {
+    const data = JSON.parse(localStorage.getItem(NOTIFICATIONS_KEY) || "[]");
+    return Array.isArray(data) ? data : [];
+  } catch(error) {
+    return [];
+  }
+}
+
+function saveNotifications(notifications) {
+  localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(notifications));
+}
+
+function relativeTime(dateValue) {
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return "Just now";
+
+  const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+  if (seconds < 60) return "Just now";
+  if (seconds < 3600) return Math.floor(seconds / 60) + "m ago";
+  if (seconds < 86400) return Math.floor(seconds / 3600) + "h ago";
+  if (seconds < 604800) return Math.floor(seconds / 86400) + "d ago";
+
+  return date.toLocaleDateString();
+}
+
+function toast(message) {
+  const element = document.getElementById("toast");
+  element.textContent = message;
+  element.classList.add("show");
+
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(function() {
+    element.classList.remove("show");
+  }, 2600);
+}
+
+function addNotification(title, message, type) {
+  const notifications = getNotifications();
+
+  notifications.unshift({
+    id: Date.now().toString() + Math.random().toString(36).slice(2),
+    title: title,
+    message: message,
+    type: type || "general",
+    createdAt: new Date().toISOString(),
+    read: false
+  });
+
+  saveNotifications(notifications.slice(0, 50));
+  renderNotifications();
+}
+
+function notificationIcon(type) {
+  if (type === "like") return "❤️";
+  if (type === "comment") return "💬";
+  if (type === "post") return "✨";
+  if (type === "follow") return "👥";
+  return "🔔";
+}
+
+function renderNotifications() {
+  const notifications = getNotifications();
+  const unreadCount = notifications.filter(function(item) {
+    return !item.read;
+  }).length;
+
+  const badge = document.getElementById("notificationBadge");
+  badge.textContent = unreadCount > 9 ? "9+" : String(unreadCount);
+  badge.classList.toggle("hidden", unreadCount === 0);
+
+  const list = document.getElementById("notificationList");
+
+  if (notifications.length === 0) {
+    list.innerHTML = '<div class="notification-empty">🔔<br><strong>No notifications yet</strong><br>When something happens, you will see it here.</div>';
+    return;
+  }
+
+  list.innerHTML = notifications.map(function(item) {
+    return `
+      <div class="notification-item ${item.read ? "" : "unread"}"
+           data-notification-id="${safe(item.id)}"
+           role="button" tabindex="0">
+        <div class="notification-icon">${notificationIcon(item.type)}</div>
+        <div class="notification-copy">
+          <strong>${safe(item.title)}</strong>
+          <p>${safe(item.message)}</p>
+          <div class="notification-time">${safe(relativeTime(item.createdAt))}</div>
+        </div>
+      </div>`;
+  }).join("");
+
+  list.querySelectorAll("[data-notification-id]").forEach(function(element) {
+    function markOneRead() {
+      const id = element.getAttribute("data-notification-id");
+      const updated = getNotifications().map(function(item) {
+        if (String(item.id) === id) item.read = true;
+        return item;
+      });
+      saveNotifications(updated);
+      renderNotifications();
+    }
+
+    element.addEventListener("click", markOneRead);
+    element.addEventListener("keydown", function(event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        markOneRead();
+      }
+    });
+  });
+}
+
+function toggleNotifications() {
+  const panel = document.getElementById("notificationPanel");
+  panel.classList.toggle("open");
+  renderNotifications();
+}
+
+function markAllNotificationsRead() {
+  const notifications = getNotifications().map(function(item) {
+    item.read = true;
+    return item;
+  });
+  saveNotifications(notifications);
+  renderNotifications();
+  toast("All notifications marked as read.");
+}
+
+function clearNotifications() {
+  saveNotifications([]);
+  renderNotifications();
+  toast("Notifications cleared.");
+}
+
+function updateTopProfile() {
+  const name = currentName();
+  const initial = name.trim().charAt(0).toUpperCase() || "Y";
+
+  document.getElementById("topName").textContent = name;
+  document.getElementById("topAvatar").textContent = initial;
+  document.getElementById("composerAvatar").textContent = initial;
+  document.getElementById("profileHeading").textContent = name;
+  document.getElementById("profileBioHeading").textContent = currentBio();
+}
+
+function openProfileModal() {
+  document.getElementById("profileNameInput").value = currentName();
+  document.getElementById("profileBioInput").value = currentBio();
+  document.getElementById("profileModal").classList.add("open");
+}
+
+function closeProfileModal() {
+  document.getElementById("profileModal").classList.remove("open");
+}
+
+function getInitial(name) {
+  return String(name || "?").trim().charAt(0).toUpperCase() || "?";
+}
+
+function avatarHTML(name) {
+  return '<div class="avatar">' + safe(getInitial(name)) + '</div>';
+}
+
+function publishPost() {
+  const messageInput = document.getElementById("postMessage");
+  const message = messageInput.value.trim();
+
+  if (!message && !selectedPhoto) {
+    toast("Please write something or add a photo first.");
+    return;
+  }
+
+  const posts = getPosts();
+  posts.unshift({
+    id: Date.now().toString() + Math.random().toString(36).slice(2),
+    name: currentName(),
+    message: message,
+    photo: selectedPhoto,
+    likes: 0,
+    likedBy: [],
+    comments: [],
+    createdAt: new Date().toISOString()
+  });
+
+  try {
+    savePosts(posts);
+  } catch(error) {
+    toast("Storage full. Please use a smaller photo.");
+    return;
+  }
+
+  messageInput.value = "";
+  document.getElementById("postPhoto").value = "";
+  selectedPhoto = "";
+  document.getElementById("imagePreviewContainer").innerHTML = "";
+
+  addNotification("Your post is live", "You shared a new post on CircleUp.", "post");
+  render();
+  toast("Your post has been published!");
+}
+
+function likePost(index) {
+  const posts = getPosts();
+  const post = posts[index];
+  if (!post) return;
+
+  if (!Array.isArray(post.likedBy)) post.likedBy = [];
+  const me = currentName();
+
+  if (post.likedBy.includes(me)) {
+    post.likedBy = post.likedBy.filter(function(name) {
+      return name !== me;
+    });
+    post.likes = post.likedBy.length;
+    savePosts(posts);
+    render();
+    toast("Like removed.");
+    return;
+  }
+
+  post.likedBy.push(me);
+  post.likes = post.likedBy.length;
+  savePosts(posts);
+
+  if (post.name !== me) {
+    addNotification(me + " liked your post", "Someone liked your post.", "like");
+  }
+
+  render();
+  toast("You liked this post.");
+}
+
+function focusComment(index) {
+  const input = document.getElementById("comment-input-" + index);
+  if (input) {
+    input.focus();
+    input.scrollIntoView({behavior:"smooth", block:"center"});
+  }
+}
+
+function addComment(index, event) {
+  event.preventDefault();
+
+  const input = document.getElementById("comment-input-" + index);
+  if (!input) return;
+
+  const text = input.value.trim();
+  if (!text) {
+    toast("Please write a comment first.");
+    return;
+  }
+
+  const posts = getPosts();
+  const post = posts[index];
+  if (!post) return;
+
+  if (!Array.isArray(post.comments)) post.comments = [];
+
+  post.comments.push({
+    name: currentName(),
+    text: text,
+    createdAt: new Date().toISOString()
+  });
+
+  savePosts(posts);
+
+  if (post.name !== currentName()) {
+    addNotification(
+      currentName() + " commented on your post",
+      text.length > 90 ? text.slice(0, 90) + "…" : text,
+      "comment"
+    );
+  }
+
+  render();
+  toast("Comment added.");
+}
+
+function renderPost(post, originalIndex) {
+  const comments = Array.isArray(post.comments) ? post.comments : [];
+  const likedBy = Array.isArray(post.likedBy) ? post.likedBy : [];
+  const likes = likedBy.length || Number(post.likes) || 0;
+  const isLiked = likedBy.includes(currentName());
+  const hasPhoto = typeof post.photo === "string" && post.photo.startsWith("data:image/");
+
+  const photoHTML = hasPhoto
+    ? '<img class="post-photo" src="' + safe(post.photo) + '" alt="Post photo">'
+    : "";
+
+  const commentsHTML = comments.map(function(comment) {
+    return `
+      <div class="comment-item">
+        ${avatarHTML(comment.name)}
+        <div class="comment-bubble">
+          <div class="comment-author">${safe(comment.name)}</div>
+          <div class="comment-text">${safe(comment.text)}</div>
+          <div class="notification-time">${safe(relativeTime(comment.createdAt))}</div>
+        </div>
+      </div>`;
+  }).join("");
+
+  return `
+    <article class="card post">
+      <div class="post-head">
+        ${avatarHTML(post.name)}
+        <div class="post-person">
+          <div class="post-name">${safe(post.name)}</div>
+          <div class="post-time">${safe(relativeTime(post.createdAt))}</div>
+        </div>
+      </div>
+
+      ${post.message ? '<div class="post-message">' + safe(post.message) + '</div>' : ""}
+      ${photoHTML}
+
+      <div class="post-stats">
+        <span>❤️ ${likes} ${likes === 1 ? "like" : "likes"}</span>
+        <span>💬 ${comments.length} ${comments.length === 1 ? "comment" : "comments"}</span>
+      </div>
+
+      <div class="post-actions">
+        <button type="button" class="${isLiked ? "liked" : ""}" data-like-index="${originalIndex}">
+          ${isLiked ? "♥ Liked" : "♡ Like"} · ${likes}
+        </button>
+        <button type="button" data-comment-focus="${originalIndex}">▤ Comment · ${comments.length}</button>
+      </div>
+
+      <div class="comments-section">
+        <div class="comment-list">
+          ${commentsHTML}
+        </div>
+        <form class="comment-form" data-comment-form="${originalIndex}">
+          <input id="comment-input-${originalIndex}" class="comment-input" maxlength="1000" placeholder="Write a comment..." aria-label="Write a comment">
+          <button class="comment-submit" type="submit">Send</button>
+        </form>
+      </div>
+    </article>`;
+}
+
+function getFilteredPosts() {
+  const posts = getPosts();
+
+  if (!searchTerm) {
+    return posts.map(function(post, index) {
+      return {post:post, index:index};
+    });
+  }
+
+  const term = searchTerm.toLowerCase();
+
+  return posts.map(function(post, index) {
+    return {post:post, index:index};
+  }).filter(function(item) {
+    return String(item.post.name || "").toLowerCase().includes(term) ||
+      String(item.post.message || "").toLowerCase().includes(term) ||
+      (Array.isArray(item.post.comments) && item.post.comments.some(function(comment) {
+        return String(comment.text || "").toLowerCase().includes(term);
+      }));
+  });
+}
+
+function renderFeed(elementId, ownPostsOnly) {
+  const element = document.getElementById(elementId);
+  let entries = getFilteredPosts();
+
+  if (ownPostsOnly) {
+    entries = entries.filter(function(item) {
+      return item.post.name === currentName();
+    });
+  }
+
+  if (entries.length === 0) {
+    element.innerHTML = `
+      <div class="card empty-state">
+        <strong>${searchTerm ? "No matching posts found" : (ownPostsOnly ? "No posts on your profile yet" : "Your feed is waiting for you")}</strong>
+        ${searchTerm ? "Try a different search." : "Share a thought or photo to get your CircleUp community started."}
+      </div>`;
+    return;
+  }
+
+  element.innerHTML = entries.map(function(item) {
+    return renderPost(item.post, item.index);
+  }).join("");
+
+  element.querySelectorAll("[data-like-index]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      likePost(Number(button.getAttribute("data-like-index")));
+    });
+  });
+
+  element.querySelectorAll("[data-comment-focus]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      focusComment(Number(button.getAttribute("data-comment-focus")));
+    });
+  });
+
+  element.querySelectorAll("[data-comment-form]").forEach(function(form) {
+    form.addEventListener("submit", function(event) {
+      addComment(Number(form.getAttribute("data-comment-form")), event);
+    });
+  });
+}
+
+function toggleFollow(name) {
+  let following = getFollowing();
+
+  if (following.includes(name)) {
+    following = following.filter(function(person) {
+      return person !== name;
+    });
+    toast("You unfollowed " + name + ".");
+  } else {
+    following.push(name);
+    toast("You are now following " + name + ".");
+  }
+
+  saveFollowing(following);
+  render();
+}
+
+function personHTML(person) {
+  const following = getFollowing().includes(person.name);
+
+  return `
+    <div class="person-row">
+      ${avatarHTML(person.name)}
+      <div class="person-info">
+        <strong>${safe(person.name)}</strong>
+        <span>${safe(person.bio)}</span>
+      </div>
+      <button class="follow-btn ${following ? "following" : ""}" type="button" data-follow-name="${safe(person.name)}">
+        ${following ? "Following" : "Follow"}
+      </button>
+    </div>`;
+}
+
+function renderPeople() {
+  const suggestions = demoPeople.filter(function(person) {
+    return person.name !== currentName();
+  });
+
+  document.getElementById("suggestedPeople").innerHTML = suggestions.slice(0, 4).map(personHTML).join("");
+  document.getElementById("communityList").innerHTML = suggestions.map(personHTML).join("");
+
+  document.querySelectorAll("[data-follow-name]").forEach(function(button) {
+    button.addEventListener("click", function() {
+      toggleFollow(button.getAttribute("data-follow-name"));
+    });
+  });
+}
+
+function renderStats() {
+  const posts = getPosts();
+  const myPosts = posts.filter(function(post) {
+    return post.name === currentName();
+  });
+
+  const likes = myPosts.reduce(function(total, post) {
+    return total + (Array.isArray(post.likedBy) ? post.likedBy.length : (Number(post.likes) || 0));
+  }, 0);
+
+  const comments = myPosts.reduce(function(total, post) {
+    return total + (Array.isArray(post.comments) ? post.comments.length : 0);
+  }, 0);
+
+  document.getElementById("statPosts").textContent = myPosts.length;
+  document.getElementById("statLikes").textContent = likes;
+  document.getElementById("statComments").textContent = comments;
+  document.getElementById("statFollowing").textContent = getFollowing().length;
+}
+
+function showPage(page) {
+  currentPage = page;
+
+  document.getElementById("homePage").classList.toggle("hidden", page !== "home");
+  document.getElementById("profilePage").classList.toggle("hidden", page !== "profile");
+  document.getElementById("communityPage").classList.toggle("hidden", page !== "community");
+
+  document.querySelectorAll("[data-page]").forEach(function(button) {
+    button.classList.toggle("active", button.getAttribute("data-page") === page);
+  });
+
+  render();
+}
+
+function render() {
+  updateTopProfile();
+  renderFeed("feed", false);
+  renderFeed("profilePosts", true);
+  renderPeople();
+  renderStats();
+  renderNotifications();
+}
+
+document.getElementById("publishBtn").addEventListener("click", publishPost);
+
+document.getElementById("postPhoto").addEventListener("change", function(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    toast("Please select an image file.");
+    event.target.value = "";
+    return;
+  }
+
+  if (file.size > 1024 * 1024) {
+    toast("Please select a photo smaller than 1 MB.");
+    event.target.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function() {
+    selectedPhoto = String(reader.result || "");
+    document.getElementById("imagePreviewContainer").innerHTML =
+      '<img class="preview-image" src="' + safe(selectedPhoto) + '" alt="Photo preview">';
+  };
+
+  reader.onerror = function() {
+    toast("Could not read this photo. Please try another.");
+  };
+
+  reader.readAsDataURL(file);
+});
+
+document.getElementById("profileForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const name = document.getElementById("profileNameInput").value.trim();
+  const bio = document.getElementById("profileBioInput").value.trim();
+
+  if (!name) {
+    toast("Please enter your name.");
+    return;
+  }
+
+  const oldName = currentName();
+
+  if (oldName !== name) {
+    const posts = getPosts();
+
+    posts.forEach(function(post) {
+      if (post.name === oldName) post.name = name;
+
+      if (Array.isArray(post.comments)) {
+        post.comments.forEach(function(comment) {
+          if (comment.name === oldName) comment.name = name;
+        });
+      }
+
+      if (Array.isArray(post.likedBy)) {
+        post.likedBy = post.likedBy.map(function(person) {
+          return person === oldName ? name : person;
+        });
+        post.likes = post.likedBy.length;
+      }
+    });
+
+    savePosts(posts);
+  }
+
+  localStorage.setItem(NAME_KEY, name);
+  localStorage.setItem(BIO_KEY, bio || "Welcome to my CircleUp profile.");
+
+  closeProfileModal();
+  render();
+  toast("Profile updated successfully.");
+});
+
+document.getElementById("notificationBtn").addEventListener("click", function(event) {
+  event.stopPropagation();
+  toggleNotifications();
+});
+
+document.getElementById("notificationPanel").addEventListener("click", function(event) {
+  event.stopPropagation();
+});
+
+document.getElementById("markReadBtn").addEventListener("click", markAllNotificationsRead);
+document.getElementById("clearNotificationsBtn").addEventListener("click", clearNotifications);
+
+document.getElementById("sidebarNotifications").addEventListener("click", function() {
+  const panel = document.getElementById("notificationPanel");
+  panel.classList.add("open");
+  renderNotifications();
+  document.getElementById("notificationBtn").focus();
+});
+
+document.addEventListener("click", function(event) {
+  const panel = document.getElementById("notificationPanel");
+  if (!panel.contains(event.target)) {
+    panel.classList.remove("open");
+  }
+});
+
+document.querySelectorAll("[data-page]").forEach(function(button) {
+  button.addEventListener("click", function() {
+    showPage(button.getAttribute("data-page"));
+  });
+});
+
+document.getElementById("searchInput").addEventListener("input", function(event) {
+  searchTerm = event.target.value.trim();
+  renderFeed("feed", false);
+  renderFeed("profilePosts", true);
+});
+
+document.getElementById("profileModal").addEventListener("click", function(event) {
+  if (event.target === this) closeProfileModal();
+});
+
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") {
+    closeProfileModal();
+    document.getElementById("notificationPanel").classList.remove("open");
+  }
+});
+
+if (!localStorage.getItem(NAME_KEY)) {
+  localStorage.setItem(NAME_KEY, "Your Name");
+}
+if (!localStorage.getItem(BIO_KEY)) {
+  localStorage.setItem(BIO_KEY, "Welcome to my CircleUp profile.");
+}
+
+render();
+</script>
+</body>
+</html>
