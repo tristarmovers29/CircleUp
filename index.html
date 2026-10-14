@@ -4,183 +4,342 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CircleUp — Connect Together</title>
+<title>CircleUp — Connect with Everyone</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
 <style>
-:root{--blue:#2463eb;--navy:#101d38;--bg:#f4f7fc;--line:#e5eaf3;--muted:#718096}
+:root {
+  --blue:#1877f2;
+  --blue-dark:#0866ff;
+  --bg:#f0f2f5;
+  --card:#ffffff;
+  --text:#1c1e21;
+  --muted:#65676b;
+  --line:#e4e6eb;
+  --green:#31a24c;
+  --shadow:0 2px 8px rgba(0,0,0,.07);
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:#17243b}
+body{margin:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--text)}
 button,input,textarea{font:inherit}
-button{cursor:pointer;border:0;border-radius:10px;padding:11px 15px;font-weight:600}
-button:disabled{opacity:.6;cursor:wait}
-.primary{background:var(--blue);color:white}
-.secondary{background:#edf3ff;color:var(--blue)}
-.danger{background:#fff0f0;color:#c62828}
-input,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;outline:none;background:white}
-input:focus,textarea:focus{border-color:var(--blue)}
-header{background:white;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.nav{max-width:1150px;margin:auto;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:15px}
-.logo{font-size:25px;font-weight:850;color:var(--blue);letter-spacing:-1px}
-.logo span{color:var(--navy)}
-.nav-actions{display:flex;gap:8px;align-items:center}
-.wrap{max-width:1150px;margin:25px auto;padding:0 16px;display:grid;grid-template-columns:235px minmax(0,600px) 250px;gap:22px}
-.panel,.post,.auth-card{background:white;border:1px solid var(--line);border-radius:17px;padding:18px;margin-bottom:16px}
-.side-title{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:15px}
-.profile-name{font-weight:800;font-size:17px;margin-top:10px}
-.muted{color:var(--muted);font-size:13px}
-.avatar{width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#e7efff;color:var(--blue);font-weight:800;flex-shrink:0}
-.row{display:flex;align-items:center;gap:12px}
-.space{justify-content:space-between}
-h2{font-size:23px;margin:0 0 6px}
-h3{font-size:16px;margin:0}
-p{line-height:1.55}
-.composer textarea{resize:vertical;min-height:90px;margin:12px 0}
-.post-head{display:flex;gap:11px;align-items:center}
-.post-text{white-space:pre-wrap;overflow-wrap:anywhere;margin:16px 0}
-.post-actions{display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px}
-.post-actions button{background:#f2f5fb;color:#42516a}
-.post-actions button.liked{background:#e8efff;color:var(--blue)}
-.comments{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
-.comment{background:#f6f8fc;border-radius:10px;padding:10px;margin:8px 0;font-size:14px}
-.comment-form{display:flex;gap:7px;margin-top:10px}
-.comment-form input{min-width:0}
-.auth-area{max-width:460px;margin:55px auto;padding:0 16px}
-.auth-card{padding:28px}
-.auth-card h2{margin-bottom:8px}
-.auth-card input{margin:8px 0}
-.auth-card button{width:100%;margin-top:10px}
-.auth-links{text-align:center;margin-top:18px}
-.auth-links a{color:var(--blue);font-weight:700;text-decoration:none}
-.auth-links a:hover{text-decoration:underline}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+.topbar{
+ position:sticky;top:0;z-index:100;background:white;height:64px;
+ display:flex;align-items:center;justify-content:space-between;padding:0 22px;
+ box-shadow:0 1px 5px #00000012;gap:18px
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:220px}
+.brand-logo{width:42px;height:42px;background:var(--blue);color:white;border-radius:50%;
+ display:grid;place-items:center;font-size:23px;font-weight:800}
+.brand-name{font-size:23px;font-weight:800;color:var(--blue);letter-spacing:-1px}
+.searchbox{background:var(--bg);border-radius:25px;padding:0 15px;display:flex;
+ align-items:center;gap:10px;width:min(360px,32vw);height:42px}
+.searchbox i{color:var(--muted)}
+.searchbox input{border:0;outline:0;background:transparent;width:100%;min-width:0}
+.topnav{display:flex;gap:6px;align-items:center;justify-content:center;flex:1;height:100%}
+.navbtn{height:48px;min-width:75px;border:0;border-radius:10px;background:transparent;
+ color:var(--muted);font-size:21px;position:relative}
+.navbtn:hover,.navbtn.active{background:#eaf2ff;color:var(--blue)}
+.navbtn.active:after{content:"";position:absolute;height:3px;background:var(--blue);
+ bottom:-8px;left:10px;right:10px;border-radius:4px}
+.top-actions{display:flex;align-items:center;gap:10px}
+.circle-btn{width:42px;height:42px;border:0;border-radius:50%;background:#e4e6eb;
+ color:#242526;display:grid;place-items:center;font-size:17px}
+.user-mini{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px}
+.avatar{width:40px;height:40px;flex-shrink:0;border-radius:50%;background:#dbeafe;
+ display:grid;place-items:center;overflow:hidden;font-weight:800;color:var(--blue)}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.avatar.big{width:46px;height:46px}
+.layout{max-width:1500px;margin:auto;display:grid;grid-template-columns:250px minmax(0,680px) 280px;
+ gap:24px;padding:22px 18px;align-items:start;justify-content:center}
+.left-sidebar,.right-sidebar{position:sticky;top:84px;max-height:calc(100vh - 100px);overflow:auto}
+.side-link{display:flex;align-items:center;gap:13px;padding:12px;border-radius:10px;
+ color:#333;text-decoration:none;font-weight:600;font-size:14px;margin-bottom:3px}
+.side-link:hover{background:#e4e6eb}
+.side-link i{width:26px;text-align:center;color:var(--blue);font-size:19px}
+.side-section-title{font-size:17px;color:var(--muted);font-weight:700;margin:22px 10px 10px}
+.card{background:var(--card);border-radius:13px;padding:16px;margin-bottom:17px;
+ box-shadow:var(--shadow)}
+.profile-card{text-align:center;padding:0 0 16px;overflow:hidden}
+.cover{height:85px;background:linear-gradient(120deg,#1877f2,#73b8ff,#8b5cf6)}
+.profile-avatar{width:78px;height:78px;margin:-39px auto 10px;border:4px solid white;
+ border-radius:50%;background:#dbeafe;position:relative;overflow:hidden;display:grid;place-items:center;
+ color:var(--blue);font-size:24px;font-weight:800}
+.profile-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-card h3{margin:4px 8px;font-size:17px}
+.muted{color:var(--muted);font-size:13px;line-height:1.5}
+.small-btn{border:0;background:#e7f0ff;color:var(--blue);border-radius:8px;
+ padding:9px 13px;font-weight:700;font-size:13px}
+.primary-btn{border:0;background:var(--blue);color:white;border-radius:8px;
+ padding:11px 16px;font-weight:700}
+.primary-btn:hover{background:#0866d6}
+.full{width:100%}
+.composer-top{display:flex;gap:11px;align-items:center}
+.composer-input{flex:1;border:0;outline:0;background:var(--bg);border-radius:25px;
+ padding:14px 17px;color:var(--text);min-width:0}
+.composer-divider{height:1px;background:var(--line);margin:15px 0 10px}
+.composer-actions{display:flex;gap:5px;justify-content:space-between}
+.action-btn{flex:1;background:transparent;border:0;border-radius:8px;padding:12px 6px;
+ color:var(--muted);font-weight:700;font-size:13px;display:flex;align-items:center;
+ justify-content:center;gap:8px}
+.action-btn:hover{background:var(--bg)}
+.action-btn.photo i{color:#45bd62}.action-btn.video i{color:#f3425f}
+.action-btn.feeling i{color:#f7b928}
+#mediaPreview{margin-top:12px;display:none;position:relative}
+#mediaPreview img,#mediaPreview video{width:100%;max-height:360px;object-fit:contain;
+ background:#111;border-radius:10px}
+.remove-media{position:absolute;right:8px;top:8px;background:white;border:0;
+ border-radius:50%;width:34px;height:34px}
+.post-head{display:flex;align-items:center;gap:10px}
+.post-author{font-size:14px;font-weight:800}
+.post-time{font-size:12px;color:var(--muted);margin-top:4px}
+.post-menu{margin-left:auto;border:0;background:transparent;color:var(--muted);
+ border-radius:50%;width:36px;height:36px}
+.post-menu:hover{background:var(--bg)}
+.post-content{font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;margin:15px 0}
+.post-media{width:calc(100% + 32px);margin:0 -16px;display:block;max-height:620px;
+ object-fit:contain;background:#111;cursor:pointer}
+.post-stats{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;
+ padding:12px 0;border-bottom:1px solid var(--line)}
+.post-actions{display:flex;gap:5px;padding-top:5px}
+.post-actions .action-btn{font-size:14px}
+.action-btn.liked{color:var(--blue)}
+.comments{margin-top:12px}
+.comment-row{display:flex;gap:8px;margin:10px 0;align-items:flex-start}
+.comment-bubble{background:var(--bg);border-radius:14px;padding:10px 12px;font-size:13px;min-width:0}
+.comment-name{font-weight:800;margin-bottom:4px}
+.comment-form{display:flex;gap:8px;margin-top:12px}
+.comment-form input{min-width:0;flex:1;background:var(--bg);border:0;border-radius:22px;
+ padding:12px 15px;outline:none}
+.comment-form button{border:0;background:transparent;color:var(--blue);font-weight:800}
+.right-title{font-size:17px;font-weight:800;margin:2px 0 13px}
+.friend-row{display:flex;align-items:center;gap:10px;padding:9px 0}
+.friend-row .friend-name{font-weight:700;font-size:13px}
+.friend-row .friend-status{font-size:11px;color:var(--green);margin-top:3px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--green);display:inline-block}
+.trend{padding:10px 0;border-bottom:1px solid var(--line)}
+.trend:last-child{border:0}
+.trend strong{font-size:13px}.trend p{font-size:12px;color:var(--muted);margin:5px 0 0}
+.footer{font-size:11px;color:var(--muted);line-height:1.8;padding:10px}
 .hidden{display:none!important}
-.notice{padding:12px;border-radius:10px;margin:12px 0;background:#edf4ff;color:#244c9b;font-size:14px;overflow-wrap:anywhere}
-.notice.error{background:#fff0f0;color:#a32222}
-#feedStatus{padding:10px 2px;color:var(--muted);font-size:13px}
-.small{font-size:12px;color:var(--muted)}
-footer{text-align:center;padding:25px;color:var(--muted);font-size:12px}
-@media(max-width:900px){.wrap{grid-template-columns:190px minmax(0,1fr)}.right{display:none}}
-@media(max-width:620px){.wrap{display:block;margin:14px auto}.left{display:none}.nav{padding:12px}.logo{font-size:22px}.nav-actions button{padding:9px;font-size:12px}.panel,.post{padding:14px}.auth-area{margin:25px auto}.auth-card{padding:20px}}
+#authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;
+ padding:24px;background:linear-gradient(130deg,#e8f1ff,#f0f2f5 55%,#e8e7ff)}
+.auth-wrap{width:100%;max-width:960px;display:grid;grid-template-columns:1fr 390px;
+ gap:50px;align-items:center}
+.auth-intro h1{font-size:58px;letter-spacing:-3px;color:var(--blue);margin:0 0 14px}
+.auth-intro p{font-size:21px;line-height:1.5;color:#41444b}
+.auth-card{background:white;border-radius:16px;padding:24px;box-shadow:0 10px 35px #00000012}
+.auth-card input{width:100%;padding:14px;border:1px solid #dddfe2;border-radius:9px;
+ margin:6px 0;outline-color:var(--blue)}
+.auth-card .primary-btn{font-size:17px;padding:14px;margin-top:8px}
+.auth-switch{text-align:center;margin-top:17px;font-size:14px}
+.link-btn{border:0;background:transparent;color:var(--blue);font-weight:800}
+.auth-error{background:#fff0f0;color:#b42318;border-radius:8px;padding:10px;
+ font-size:13px;margin:8px 0;white-space:pre-wrap}
+.auth-note{font-size:12px;color:var(--muted);text-align:center;line-height:1.5;margin-top:14px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#242526;
+ color:white;padding:12px 18px;border-radius:10px;z-index:300;font-size:13px;
+ box-shadow:var(--shadow);max-width:90%;text-align:center}
+.loading{text-align:center;color:var(--muted);padding:25px;font-size:14px}
+.empty{text-align:center;padding:35px 15px;color:var(--muted)}
+.empty i{font-size:35px;color:#b9c8df;margin-bottom:12px}
+.mobile-bottom{display:none}
+@media(max-width:1150px){
+ .layout{grid-template-columns:210px minmax(0,680px);gap:18px}
+ .right-sidebar{display:none}
+ .brand{min-width:180px}
+}
+@media(max-width:760px){
+ .topbar{height:58px;padding:0 10px;gap:8px}
+ .brand{min-width:0}.brand-logo{width:37px;height:37px;font-size:20px}
+ .brand-name{font-size:20px}
+ .searchbox{width:40px;height:40px;padding:0;justify-content:center;background:#f0f2f5}
+ .searchbox input{display:none}
+ .topnav{display:none}
+ .top-actions{gap:5px}
+ .top-actions .user-mini span{display:none}
+ .top-actions .circle-btn{width:37px;height:37px}
+ .layout{display:block;padding:12px 0 78px}
+ .left-sidebar,.right-sidebar{display:none}
+ .feed{width:100%}
+ .card{border-radius:0;margin-bottom:10px;padding:13px}
+ .post-media{width:calc(100% + 26px);margin:0 -13px}
+ .auth-wrap{display:block;max-width:400px}
+ .auth-intro{text-align:center;margin-bottom:22px}
+ .auth-intro h1{font-size:43px}
+ .auth-intro p{font-size:16px}
+ .auth-card{padding:19px}
+ .mobile-bottom{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:white;box-shadow:0 -2px 8px #00000010;justify-content:space-around;
+  padding:8px 2px calc(8px + env(safe-area-inset-bottom))}
+ .mobile-bottom button{border:0;background:transparent;color:#65676b;font-size:20px;
+  padding:7px 13px;border-radius:9px}
+ .mobile-bottom button.active{color:var(--blue)}
+ .composer-actions .action-btn{font-size:12px}
+ .action-btn{gap:5px}
+}
 </style>
 </head>
+
 <body>
 
-<header>
-  <div class="nav">
-    <div class="logo">Circle<span>Up</span></div>
-    <div class="nav-actions">
-      <button id="refreshBtn" class="secondary hidden" onclick="loadFeed()">Refresh</button>
-      <button id="logoutBtn" class="danger hidden" onclick="logout()">Log out</button>
-    </div>
+<!-- LOGIN / SIGNUP -->
+<section id="authScreen">
+ <div class="auth-wrap">
+  <div class="auth-intro">
+   <h1>CircleUp</h1>
+   <p>Connect with friends, share your moments, and discover your community.</p>
   </div>
-</header>
-
-<!-- SIGNUP AND LOGIN -->
-<section id="authArea" class="auth-area">
   <div class="auth-card">
-    <div class="logo" style="margin-bottom:20px">Circle<span>Up</span></div>
-    <h2 id="authHeading">Welcome to CircleUp</h2>
-    <p class="muted">Connect, share and keep in touch.</p>
-
-    <div id="authMessage" class="notice hidden"></div>
-
-    <div id="nameWrap">
-      <input id="fullName" placeholder="Your full name" autocomplete="name">
+   <form id="authForm">
+    <h2 id="authTitle" style="margin:0 0 12px">Welcome back</h2>
+    <div id="signupFields" class="hidden">
+     <input id="fullName" type="text" placeholder="Your full name" autocomplete="name">
     </div>
-
-    <input id="email" type="email" placeholder="Email address" autocomplete="email">
-    <input id="password" type="password" placeholder="Password (minimum 6 characters)" autocomplete="new-password">
-
-    <button id="authBtn" class="primary" onclick="signUp()">Create account</button>
-
-    <!-- ALWAYS VISIBLE LOGIN BUTTON -->
-    <button id="directLoginBtn" class="secondary" onclick="showLogin()">
-      Already have an account? Log in
-    </button>
-
-    <p class="auth-links muted">
-      <span id="switchText">Already have an account?</span>
-      <a href="#" id="switchAuth" onclick="toggleAuth(event)">Log in</a>
-    </p>
+    <input id="email" type="email" placeholder="Email address" autocomplete="email" required>
+    <input id="password" type="password" placeholder="Password (minimum 6 characters)"
+     autocomplete="current-password" minlength="6" required>
+    <div id="authError" class="auth-error hidden"></div>
+    <button id="authSubmit" type="submit" class="primary-btn full">Log in</button>
+   </form>
+   <div class="auth-switch">
+    <span id="authSwitchText">Don't have an account?</span>
+    <button id="authSwitch" class="link-btn" type="button">Create account</button>
+   </div>
+   <div class="auth-note">By continuing, you agree to use CircleUp respectfully.</div>
   </div>
+ </div>
 </section>
 
 <!-- MAIN APP -->
-<div id="app" class="wrap hidden">
+<div id="appScreen" class="hidden">
+ <header class="topbar">
+  <div class="brand">
+   <div class="brand-logo">C</div>
+   <span class="brand-name">CircleUp</span>
+  </div>
 
-  <aside class="left">
-    <div class="panel">
-      <div class="side-title">Your profile</div>
-      <div class="avatar" id="sideAvatar">CU</div>
-      <div class="profile-name" id="sideName">CircleUp member</div>
-      <p class="muted" id="sideBio">Welcome to your community.</p>
-      <button class="secondary" style="width:100%" onclick="editProfile()">Edit profile</button>
-    </div>
+  <label class="searchbox">
+   <i class="fa-solid fa-magnifying-glass"></i>
+   <input id="searchInput" type="search" placeholder="Search CircleUp">
+  </label>
 
-    <div class="panel">
-      <div class="side-title">Your community</div>
-      <p class="muted">Share updates, join conversations and connect with other members.</p>
-    </div>
+  <nav class="topnav">
+   <button class="navbtn active" data-nav="home" title="Home"><i class="fa-solid fa-house"></i></button>
+   <button class="navbtn" data-nav="friends" title="Friends"><i class="fa-solid fa-user-group"></i></button>
+   <button class="navbtn" data-nav="videos" title="Videos"><i class="fa-solid fa-circle-play"></i></button>
+   <button class="navbtn" data-nav="notifications" title="Notifications"><i class="fa-solid fa-bell"></i></button>
+  </nav>
+
+  <div class="top-actions">
+   <button class="circle-btn" id="newPostTop" title="Create post"><i class="fa-solid fa-plus"></i></button>
+   <button class="circle-btn" id="logoutBtn" title="Log out"><i class="fa-solid fa-right-from-bracket"></i></button>
+   <div class="user-mini">
+    <div class="avatar" id="topAvatar">C</div>
+    <span id="topName">My profile</span>
+   </div>
+  </div>
+ </header>
+
+ <div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="left-sidebar">
+   <div class="card profile-card">
+    <div class="cover"></div>
+    <div class="profile-avatar" id="sideAvatar">C</div>
+    <h3 id="sideName">Your profile</h3>
+    <p class="muted" id="sideBio">Your CircleUp community starts here.</p>
+    <button class="small-btn" id="editProfileBtn"><i class="fa-solid fa-pen"></i> Edit profile</button>
+   </div>
+
+   <a class="side-link" href="#" data-nav="home"><i class="fa-solid fa-house"></i> Home Feed</a>
+   <a class="side-link" href="#" data-nav="friends"><i class="fa-solid fa-user-group"></i> Friends</a>
+   <a class="side-link" href="#" data-nav="videos"><i class="fa-solid fa-circle-play"></i> Videos</a>
+   <a class="side-link" href="#" data-nav="notifications"><i class="fa-solid fa-bell"></i> Notifications</a>
+   <a class="side-link" href="#" id="savedLink"><i class="fa-solid fa-bookmark"></i> Saved posts</a>
+   <a class="side-link" href="#" id="profileLink"><i class="fa-solid fa-user"></i> My profile</a>
+
+   <div class="side-section-title">Your shortcuts</div>
+   <a class="side-link" href="#" id="createPostLink"><i class="fa-solid fa-square-plus"></i> Create a post</a>
+   <a class="side-link" href="#" id="refreshLink"><i class="fa-solid fa-rotate"></i> Refresh feed</a>
+
+   <div class="footer">Privacy · Terms · About · Help<br>© 2026 CircleUp</div>
   </aside>
 
-  <main>
-    <div class="row space" style="margin:4px 2px 18px">
-      <div>
-        <h2>Home Feed</h2>
-        <div class="muted">What's happening in your circle?</div>
-      </div>
-      <button class="secondary" onclick="loadNotifications()">
-        Notifications <span id="notificationCount"></span>
-      </button>
+  <!-- CENTER FEED -->
+  <main class="feed">
+   <section id="composer" class="card">
+    <div class="composer-top">
+     <div class="avatar big" id="composerAvatar">C</div>
+     <input id="postText" class="composer-input" placeholder="What's on your mind?" maxlength="5000">
     </div>
-
-    <div id="notificationPanel" class="panel hidden">
-      <div class="row space">
-        <h3>Notifications</h3>
-        <button class="secondary" onclick="markNotificationsRead()">Mark all read</button>
-      </div>
-      <div id="notificationList" class="muted" style="margin-top:12px"></div>
+    <div id="mediaPreview"></div>
+    <div class="composer-divider"></div>
+    <div class="composer-actions">
+     <button class="action-btn photo" id="choosePhoto"><i class="fa-solid fa-image"></i> Photo</button>
+     <button class="action-btn video" id="chooseVideo"><i class="fa-solid fa-video"></i> Video</button>
+     <button class="action-btn feeling" id="feelingBtn"><i class="fa-regular fa-face-smile"></i> Feeling</button>
     </div>
+    <input id="mediaFile" type="file" accept="image/*,video/mp4,video/webm,video/quicktime" class="hidden">
+    <div id="uploadHint" class="muted hidden" style="margin-top:10px"></div>
+    <button id="publishBtn" class="primary-btn full" style="margin-top:12px">Post</button>
+   </section>
 
-    <div class="panel composer">
-      <div class="row">
-        <div class="avatar" id="composerAvatar">CU</div>
-        <div>
-          <strong id="composerName">Create a post</strong>
-          <div class="muted">Share something with your circle</div>
-        </div>
-      </div>
+   <div id="feedHeading" class="card" style="padding:14px 17px">
+    <strong style="font-size:17px">Latest posts</strong>
+    <span class="muted" style="display:block;margin-top:4px">See what's happening in your community.</span>
+   </div>
 
-      <textarea id="postContent" placeholder="What's on your mind?" maxlength="5000"></textarea>
-
-      <div class="row space">
-        <span class="small">Posts are shared with signed-in members.</span>
-        <button class="primary" id="publishBtn" onclick="createPost()">Publish post</button>
-      </div>
-    </div>
-
-    <div id="feedStatus">Loading posts...</div>
-    <div id="feed"></div>
+   <div id="postsFeed">
+    <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading your feed...</div>
+   </div>
   </main>
 
-  <aside class="right">
-    <div class="panel">
-      <div class="side-title">About CircleUp</div>
-      <h3>A place to connect</h3>
-      <p class="muted">Share your thoughts, interact with posts and build your community.</p>
+  <!-- RIGHT SIDEBAR -->
+  <aside class="right-sidebar">
+   <div class="card">
+    <div class="right-title">Your community</div>
+    <div class="friend-row">
+     <div class="avatar"><i class="fa-solid fa-users"></i></div>
+     <div><div class="friend-name">CircleUp members</div><div class="muted">Connect and share together</div></div>
     </div>
+    <div class="friend-row">
+     <div class="avatar"><i class="fa-solid fa-photo-film"></i></div>
+     <div><div class="friend-name">Share your moments</div><div class="muted">Photos, videos and updates</div></div>
+    </div>
+   </div>
 
-    <div class="panel">
-      <div class="side-title">Account</div>
-      <div id="accountEmail" class="muted"></div>
-      <p class="small">Keep your login credentials private.</p>
-    </div>
+   <div class="card">
+    <div class="right-title">Community tips</div>
+    <div class="trend"><strong><i class="fa-solid fa-camera" style="color:#45bd62"></i> Share a photo</strong><p>Show your community a moment from your day.</p></div>
+    <div class="trend"><strong><i class="fa-solid fa-comments" style="color:#1877f2"></i> Start a conversation</strong><p>Comment on posts and be respectful.</p></div>
+    <div class="trend"><strong><i class="fa-solid fa-shield-halved" style="color:#f7b928"></i> Stay safe</strong><p>Only share content you have permission to post.</p></div>
+   </div>
+   <div class="footer">CircleUp is a community platform. Features depend on your account and database permissions.</div>
   </aside>
+ </div>
+
+ <nav class="mobile-bottom">
+  <button class="active" data-nav="home" title="Home"><i class="fa-solid fa-house"></i></button>
+  <button data-nav="friends" title="Friends"><i class="fa-solid fa-user-group"></i></button>
+  <button id="mobileCreate" title="Create post"><i class="fa-solid fa-plus-circle"></i></button>
+  <button data-nav="videos" title="Videos"><i class="fa-solid fa-circle-play"></i></button>
+  <button data-nav="notifications" title="Notifications"><i class="fa-solid fa-bell"></i></button>
+ </nav>
 </div>
 
-<footer>CircleUp © 2026 · Connect together</footer>
+<div id="toast" class="hidden"></div>
 
 <script>
-/* SUPABASE SETTINGS */
+/* =========================================================
+   CIRCLEUP CONFIGURATION
+   Keep your existing Supabase project and publishable key.
+   ========================================================= */
 const SUPABASE_URL = "https://wwbscgnwbcuwoaihxdtc.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_fmDJ0C1Xib_DxMwnQWkesA_JU8WiXx8";
 
@@ -189,535 +348,738 @@ const db = window.supabase.createClient(
   SUPABASE_PUBLISHABLE_KEY
 );
 
+const MEDIA_BUCKET = "post-media";
+const MAX_IMAGE_MB = 10;
+const MAX_VIDEO_MB = 50;
+
 let currentUser = null;
 let currentProfile = null;
-let authMode = "signup";
-let postCache = [];
+let isSignup = false;
+let selectedFile = null;
+let previewUrl = null;
+let allPosts = [];
+let activeMode = "home";
+let savedPostIds = new Set();
 
-function el(id) {
-  return document.getElementById(id);
-}
+const $ = id => document.getElementById(id);
 
-function safe(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  }[c]));
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+  }[ch]));
 }
 
 function initials(name) {
-  return String(name || "CU")
-    .trim()
-    .split(/\s+/)
-    .slice(0,2)
-    .map(x => x[0] || "")
-    .join("")
-    .toUpperCase();
+  return String(name || "C").trim().split(/\s+/).slice(0,2)
+    .map(x => x[0] || "").join("").toUpperCase() || "C";
 }
 
-function showMessage(message, error=false) {
-  const box = el("authMessage");
-  box.textContent = message;
-  box.className = "notice" + (error ? " error" : "");
+function avatarHTML(profile, sizeClass = "") {
+  const name = profile?.full_name || "CircleUp member";
+  const url = profile?.avatar_url;
+  return `<div class="avatar ${sizeClass}">${
+    url ? `<img src="${escapeHTML(url)}" alt="" referrerpolicy="no-referrer">`
+        : escapeHTML(initials(name))
+  }</div>`;
 }
 
-function showAuth() {
-  el("authArea").classList.remove("hidden");
-  el("app").classList.add("hidden");
-  el("logoutBtn").classList.add("hidden");
-  el("refreshBtn").classList.add("hidden");
+function showToast(message, duration = 3500) {
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.remove("hidden");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => el.classList.add("hidden"), duration);
 }
 
-function showApp() {
-  el("authArea").classList.add("hidden");
-  el("app").classList.remove("hidden");
-  el("logoutBtn").classList.remove("hidden");
-  el("refreshBtn").classList.remove("hidden");
+function showAuthError(message) {
+  $("authError").textContent = message;
+  $("authError").classList.remove("hidden");
 }
 
-/* OPEN LOGIN DIRECTLY */
-function showLogin() {
-  authMode = "login";
-
-  el("authHeading").textContent = "Welcome back";
-  el("authBtn").textContent = "Log in";
-  el("nameWrap").classList.add("hidden");
-  el("directLoginBtn").classList.add("hidden");
-
-  el("switchText").textContent = "New to CircleUp?";
-  el("switchAuth").textContent = "Create account";
-  el("password").autocomplete = "current-password";
-  el("authMessage").classList.add("hidden");
+function clearAuthError() {
+  $("authError").textContent = "";
+  $("authError").classList.add("hidden");
 }
 
-/* SWITCH BETWEEN LOGIN AND SIGNUP */
-function toggleAuth(event) {
+function setBusy(button, busy, busyText = "Please wait...") {
+  if (!button.dataset.originalText) button.dataset.originalText = button.textContent;
+  button.disabled = busy;
+  button.textContent = busy ? busyText : button.dataset.originalText;
+}
+
+function formatDate(dateString) {
+  if (!dateString) return "Just now";
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return "Just now";
+  return date.toLocaleString([], {
+    month:"short", day:"numeric", hour:"numeric", minute:"2-digit"
+  });
+}
+
+function friendlyError(error) {
+  const message = error?.message || String(error || "Unknown error");
+  if (/row-level security|rls|permission denied/i.test(message))
+    return "Supabase permission blocked this action. Check the table's RLS policies.";
+  if (/bucket|storage/i.test(message))
+    return "Media upload failed. Check that the post-media bucket and its policies exist.";
+  if (/duplicate key/i.test(message))
+    return "This item already exists.";
+  return message;
+}
+
+/* ---------------- AUTH ---------------- */
+
+function setAuthMode(signup) {
+  isSignup = signup;
+  $("authTitle").textContent = signup ? "Create your account" : "Welcome back";
+  $("authSubmit").textContent = signup ? "Create account" : "Log in";
+  $("authSwitchText").textContent = signup ? "Already have an account?" : "Don't have an account?";
+  $("authSwitch").textContent = signup ? "Log in" : "Create account";
+  $("signupFields").classList.toggle("hidden", !signup);
+  $("fullName").required = signup;
+  $("password").autocomplete = signup ? "new-password" : "current-password";
+  clearAuthError();
+}
+
+$("authSwitch").addEventListener("click", () => setAuthMode(!isSignup));
+
+$("authForm").addEventListener("submit", async event => {
   event.preventDefault();
+  clearAuthError();
 
-  if (authMode === "signup") {
-    showLogin();
-  } else {
-    authMode = "signup";
+  const button = $("authSubmit");
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  const fullName = $("fullName").value.trim();
 
-    el("authHeading").textContent = "Welcome to CircleUp";
-    el("authBtn").textContent = "Create account";
-    el("nameWrap").classList.remove("hidden");
-    el("directLoginBtn").classList.remove("hidden");
-
-    el("switchText").textContent = "Already have an account?";
-    el("switchAuth").textContent = "Log in";
-    el("password").autocomplete = "new-password";
-    el("authMessage").classList.add("hidden");
-  }
-}
-
-/* SIGNUP OR LOGIN */
-async function signUp() {
-  const email = el("email").value.trim();
-  const password = el("password").value;
-  const name = el("fullName").value.trim();
-
-  if (!email || !password) {
-    showMessage("Please enter your email and password.", true);
+  if (isSignup && !fullName) {
+    showAuthError("Please enter your full name.");
     return;
   }
 
-  if (password.length < 6) {
-    showMessage("Password must be at least 6 characters.", true);
-    return;
-  }
-
-  if (authMode === "signup" && !name) {
-    showMessage("Please enter your full name.", true);
-    return;
-  }
-
-  el("authBtn").disabled = true;
-
+  setBusy(button, true, "Please wait...");
   try {
-    if (authMode === "signup") {
-      const {data, error} = await db.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: {full_name: name}
-        }
+    if (isSignup) {
+      const { data, error } = await db.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: fullName } }
       });
-
       if (error) throw error;
 
-      if (data.session && data.user) {
+      if (data.session) {
         currentUser = data.user;
-        await startApp();
+        await ensureProfile(fullName);
+        await enterApp();
       } else {
-        showMessage(
-          "Account created. Check your email to confirm your account, then log in."
-        );
+        showAuthError("Your account request was submitted. If email confirmation is enabled, check your inbox and spam folder, then confirm your email before logging in.");
       }
     } else {
-      const {data, error} = await db.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
-
+      const { data, error } = await db.auth.signInWithPassword({ email, password });
       if (error) throw error;
-
       currentUser = data.user;
-      await startApp();
+      await enterApp();
     }
   } catch (error) {
-    showMessage(error.message || "Authentication failed.", true);
+    showAuthError(friendlyError(error));
   } finally {
-    el("authBtn").disabled = false;
+    setBusy(button, false);
   }
-}
+});
 
-async function logout() {
-  const {error} = await db.auth.signOut();
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
+$("logoutBtn").addEventListener("click", async () => {
+  const { error } = await db.auth.signOut();
+  if (error) return showToast(friendlyError(error));
   currentUser = null;
   currentProfile = null;
-  showAuth();
-}
+  $("appScreen").classList.add("hidden");
+  $("authScreen").classList.remove("hidden");
+  $("password").value = "";
+  showToast("You have logged out.");
+});
 
-async function startApp() {
+/* ---------------- PROFILE ---------------- */
+
+async function ensureProfile(nameFromSignup = "") {
   if (!currentUser) return;
 
-  showApp();
-  el("accountEmail").textContent = currentUser.email || "";
-
-  await loadProfile();
-  await loadFeed();
-  await loadNotifications();
-}
-
-/* PROFILE */
-async function loadProfile() {
-  const {data, error} = await db.from("profiles")
+  const { data, error } = await db.from("profiles")
     .select("id,full_name,bio,avatar_url")
     .eq("id", currentUser.id)
     .maybeSingle();
 
-  if (error) {
-    console.error("Profile error:", error);
+  if (error) throw error;
+
+  if (data) {
+    currentProfile = data;
     return;
   }
 
-  currentProfile = data;
+  const newProfile = {
+    id: currentUser.id,
+    full_name: nameFromSignup ||
+      currentUser.user_metadata?.full_name ||
+      currentUser.email?.split("@")[0] || "CircleUp member",
+    bio: "",
+    avatar_url: ""
+  };
 
-  const name = data?.full_name ||
-    currentUser.user_metadata?.full_name ||
-    currentUser.email;
-
-  const bio = data?.bio || "Welcome to your community.";
-
-  el("sideName").textContent = name;
-  el("sideBio").textContent = bio;
-  el("sideAvatar").textContent = initials(name);
-  el("composerAvatar").textContent = initials(name);
-  el("composerName").textContent = name;
+  const result = await db.from("profiles").upsert(newProfile).select().single();
+  if (result.error) throw result.error;
+  currentProfile = result.data;
 }
+
+function updateProfileUI() {
+  const profile = currentProfile || {
+    full_name: currentUser?.email?.split("@")[0] || "CircleUp member",
+    bio: "",
+    avatar_url: ""
+  };
+
+  $("topName").textContent = profile.full_name || "CircleUp member";
+  $("sideName").textContent = profile.full_name || "CircleUp member";
+  $("sideBio").textContent = profile.bio || "Welcome to your CircleUp profile.";
+  $("topAvatar").innerHTML = profile.avatar_url
+    ? `<img src="${escapeHTML(profile.avatar_url)}" alt="">`
+    : escapeHTML(initials(profile.full_name));
+  $("sideAvatar").innerHTML = profile.avatar_url
+    ? `<img src="${escapeHTML(profile.avatar_url)}" alt="">`
+    : escapeHTML(initials(profile.full_name));
+  $("composerAvatar").innerHTML = profile.avatar_url
+    ? `<img src="${escapeHTML(profile.avatar_url)}" alt="">`
+    : escapeHTML(initials(profile.full_name));
+}
+
+$("editProfileBtn").addEventListener("click", editProfile);
+$("profileLink").addEventListener("click", event => {
+  event.preventDefault();
+  editProfile();
+});
 
 async function editProfile() {
-  const name = prompt(
-    "Enter your full name:",
-    currentProfile?.full_name || ""
-  );
+  if (!currentProfile) return;
 
-  if (name === null) return;
+  const fullName = prompt("Your display name:", currentProfile.full_name || "");
+  if (fullName === null) return;
+  if (!fullName.trim()) return showToast("Name cannot be empty.");
 
-  if (!name.trim()) {
-    alert("Name cannot be empty.");
-    return;
-  }
-
-  const bio = prompt(
-    "Enter your bio:",
-    currentProfile?.bio || ""
-  );
-
+  const bio = prompt("Your bio:", currentProfile.bio || "");
   if (bio === null) return;
 
-  const {error} = await db.from("profiles").upsert({
-    id: currentUser.id,
-    full_name: name.trim(),
+  const { data, error } = await db.from("profiles").update({
+    full_name: fullName.trim(),
     bio: bio.trim()
-  });
+  }).eq("id", currentUser.id).select().single();
 
-  if (error) {
-    alert("Could not update profile: " + error.message);
-    return;
-  }
-
-  await loadProfile();
-  alert("Profile updated.");
+  if (error) return showToast(friendlyError(error));
+  currentProfile = data;
+  updateProfileUI();
+  showToast("Profile updated.");
 }
 
-/* LOAD POSTS, LIKES AND COMMENTS */
-async function loadFeed() {
+/* ---------------- MEDIA PICKER ---------------- */
+
+$("choosePhoto").addEventListener("click", () => {
+  $("mediaFile").accept = "image/*";
+  $("mediaFile").click();
+});
+
+$("chooseVideo").addEventListener("click", () => {
+  $("mediaFile").accept = "video/mp4,video/webm,video/quicktime";
+  $("mediaFile").click();
+});
+
+$("feelingBtn").addEventListener("click", () => {
+  const feeling = prompt("How are you feeling? (e.g. happy, grateful, excited)");
+  if (feeling?.trim()) {
+    const input = $("postText");
+    input.value = input.value.trim()
+      ? input.value + " Feeling " + feeling.trim() + "."
+      : "Feeling " + feeling.trim() + ".";
+    input.focus();
+  }
+});
+
+$("mediaFile").addEventListener("change", () => {
+  const file = $("mediaFile").files?.[0];
+  if (!file) return;
+
+  const isVideo = file.type.startsWith("video/");
+  const isImage = file.type.startsWith("image/");
+  if (!isVideo && !isImage) {
+    $("mediaFile").value = "";
+    return showToast("Please choose an image or video file.");
+  }
+
+  const limit = (isVideo ? MAX_VIDEO_MB : MAX_IMAGE_MB) * 1024 * 1024;
+  if (file.size > limit) {
+    $("mediaFile").value = "";
+    return showToast(`File is too large. Maximum: ${isVideo ? MAX_VIDEO_MB : MAX_IMAGE_MB} MB.`);
+  }
+
+  clearSelectedMedia();
+  selectedFile = file;
+  previewUrl = URL.createObjectURL(file);
+
+  const preview = $("mediaPreview");
+  preview.style.display = "block";
+  preview.innerHTML = `
+    <button type="button" class="remove-media" id="removeMedia" title="Remove media">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    ${isVideo
+      ? `<video src="${previewUrl}" controls playsinline></video>`
+      : `<img src="${previewUrl}" alt="Selected photo preview">`}
+    <div class="muted" style="margin-top:6px">${escapeHTML(file.name)} · ${(file.size / 1024 / 1024).toFixed(1)} MB</div>
+  `;
+  $("removeMedia").addEventListener("click", () => {
+    clearSelectedMedia();
+    $("mediaFile").value = "";
+  });
+});
+
+function clearSelectedMedia() {
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+  previewUrl = null;
+  selectedFile = null;
+  $("mediaPreview").innerHTML = "";
+  $("mediaPreview").style.display = "none";
+}
+
+/* ---------------- CREATE POST ---------------- */
+
+$("publishBtn").addEventListener("click", publishPost);
+$("newPostTop").addEventListener("click", focusComposer);
+$("mobileCreate").addEventListener("click", focusComposer);
+$("createPostLink").addEventListener("click", event => {
+  event.preventDefault();
+  focusComposer();
+});
+function focusComposer() {
+  $("composer").scrollIntoView({behavior:"smooth", block:"center"});
+  $("postText").focus();
+}
+
+async function uploadMedia(file) {
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const path = `${currentUser.id}/${Date.now()}-${safeName}`;
+
+  const { error: uploadError } = await db.storage
+    .from(MEDIA_BUCKET)
+    .upload(path, file, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: file.type
+    });
+
+  if (uploadError) throw uploadError;
+
+  const { data } = db.storage.from(MEDIA_BUCKET).getPublicUrl(path);
+  if (!data?.publicUrl) throw new Error("Could not create a media URL.");
+  return data.publicUrl;
+}
+
+async function publishPost() {
+  if (!currentUser) return showToast("Please log in first.");
+
+  const content = $("postText").value.trim();
+  const file = selectedFile;
+  if (!content && !file) return showToast("Write something or choose a photo/video.");
+
+  const button = $("publishBtn");
+  setBusy(button, true, file ? "Uploading media..." : "Publishing...");
+  $("uploadHint").textContent = file
+    ? "Please keep this page open while your media uploads."
+    : "Publishing your post...";
+  $("uploadHint").classList.remove("hidden");
+
+  try {
+    let image_url = null;
+    if (file) image_url = await uploadMedia(file);
+
+    const { error } = await db.from("posts").insert({
+      user_id: currentUser.id,
+      content,
+      image_url
+    });
+    if (error) throw error;
+
+    $("postText").value = "";
+    $("mediaFile").value = "";
+    clearSelectedMedia();
+    await loadPosts();
+    showToast("Your post has been published!");
+  } catch (error) {
+    showToast("Could not publish: " + friendlyError(error), 6000);
+  } finally {
+    setBusy(button, false);
+    $("uploadHint").classList.add("hidden");
+  }
+}
+
+/* ---------------- FEED ---------------- */
+
+async function loadPosts() {
   if (!currentUser) return;
 
-  el("feedStatus").textContent = "Loading posts...";
+  $("postsFeed").innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading posts...</div>';
 
-  const {data: posts, error} = await db.from("posts")
-    .select("id,user_id,content,image_url,created_at")
-    .order("created_at", {ascending:false})
-    .limit(50);
+  try {
+    const { data: posts, error } = await db.from("posts")
+      .select("id,user_id,content,image_url,created_at")
+      .order("created_at", { ascending:false })
+      .limit(100);
 
-  if (error) {
-    el("feedStatus").textContent =
-      "Could not load posts: " + error.message;
-    return;
-  }
+    if (error) throw error;
 
-  const list = posts || [];
-  const ids = [...new Set(list.map(p => p.user_id).filter(Boolean))];
-  const postIds = list.map(p => p.id);
+    const rows = posts || [];
+    const userIds = [...new Set(rows.map(p => p.user_id).filter(Boolean))];
 
-  let profiles = [];
-  let likes = [];
-  let comments = [];
+    let profileMap = {};
+    if (userIds.length) {
+      const { data: profiles, error: profileError } = await db.from("profiles")
+        .select("id,full_name,bio,avatar_url")
+        .in("id", userIds);
 
-  if (ids.length) {
-    const r = await db.from("profiles")
-      .select("id,full_name,avatar_url")
-      .in("id", ids);
+      if (profileError) console.warn("Could not load some profiles:", profileError.message);
+      (profiles || []).forEach(profile => profileMap[profile.id] = profile);
+    }
 
-    if (r.error) console.error(r.error);
-    else profiles = r.data || [];
-  }
+    let likes = [];
+    let comments = [];
 
-  if (postIds.length) {
-    const r = await db.from("likes")
-      .select("post_id,user_id")
-      .in("post_id", postIds);
+    if (rows.length) {
+      const postIds = rows.map(p => p.id);
+      const likeResult = await db.from("likes")
+        .select("post_id,user_id").in("post_id", postIds);
+      if (!likeResult.error) likes = likeResult.data || [];
+      else console.warn("Likes unavailable:", likeResult.error.message);
 
-    if (r.error) console.error(r.error);
-    else likes = r.data || [];
+      const commentResult = await db.from("comments")
+        .select("id,post_id,user_id,content,created_at")
+        .in("post_id", postIds).order("created_at", { ascending:true });
+      if (!commentResult.error) comments = commentResult.data || [];
+      else console.warn("Comments unavailable:", commentResult.error.message);
 
-    const c = await db.from("comments")
-      .select("id,post_id,user_id,content,created_at")
-      .in("post_id", postIds)
-      .order("created_at", {ascending:true});
+      const commentUserIds = [...new Set(comments.map(c => c.user_id).filter(Boolean))];
+      const missingIds = commentUserIds.filter(id => !profileMap[id]);
 
-    if (c.error) console.error(c.error);
-    else comments = c.data || [];
-  }
+      if (missingIds.length) {
+        const extra = await db.from("profiles")
+          .select("id,full_name,bio,avatar_url").in("id", missingIds);
+        if (!extra.error) (extra.data || []).forEach(p => profileMap[p.id] = p);
+      }
+    }
 
-  const profileMap = {};
-  profiles.forEach(p => profileMap[p.id] = p);
-
-  postCache = list.map(p => ({
-    ...p,
-    author: profileMap[p.user_id]?.full_name || "CircleUp member",
-    likes: likes.filter(l => l.post_id === p.id),
-    comments: comments
-      .filter(c => c.post_id === p.id)
-      .map(c => ({
+    allPosts = rows.map(post => ({
+      ...post,
+      profile: profileMap[post.user_id] || {
+        id: post.user_id,
+        full_name: "CircleUp member",
+        avatar_url: ""
+      },
+      likes: likes.filter(l => String(l.post_id) === String(post.id)),
+      comments: comments.filter(c => String(c.post_id) === String(post.id)).map(c => ({
         ...c,
-        author: profileMap[c.user_id]?.full_name || "Member"
+        profile: profileMap[c.user_id] || { full_name:"CircleUp member", avatar_url:"" }
       }))
-  }));
+    }));
 
-  renderFeed();
+    renderPosts();
+  } catch (error) {
+    $("postsFeed").innerHTML = `
+      <div class="card">
+        <strong>Feed could not be loaded</strong>
+        <p class="muted">${escapeHTML(friendlyError(error))}</p>
+        <button class="primary-btn" onclick="loadPosts()">Try again</button>
+      </div>`;
+  }
 }
 
-function renderFeed() {
-  const feed = el("feed");
+function renderPosts() {
+  const search = $("searchInput").value.trim().toLowerCase();
 
-  if (!postCache.length) {
-    el("feedStatus").textContent =
-      "No posts yet. Be the first to share an update!";
-    feed.innerHTML = "";
+  let posts = allPosts.filter(post => {
+    if (activeMode === "videos") {
+      if (!isVideoURL(post.image_url)) return false;
+    } else if (activeMode === "friends" || activeMode === "notifications") {
+      return false;
+    }
+    if (activeMode === "saved" && !savedPostIds.has(String(post.id))) return false;
+    if (activeMode === "profile" && post.user_id !== currentUser.id) return false;
+    if (search && !(
+      String(post.content || "").toLowerCase().includes(search) ||
+      String(post.profile?.full_name || "").toLowerCase().includes(search)
+    )) return false;
+    return true;
+  });
+
+  if (activeMode === "friends") {
+    $("feedHeading").innerHTML = "<strong style='font-size:17px'>Friends</strong><p class='muted'>Friend requests and friend lists need a friends table in Supabase. This page currently shows your community's public posts.</p>";
+    posts = allPosts;
+  } else if (activeMode === "notifications") {
+    $("feedHeading").innerHTML = "<strong style='font-size:17px'>Notifications</strong><p class='muted'>Notifications are not connected in this version. Your feed is still available below.</p>";
+    posts = allPosts;
+  } else if (activeMode === "videos") {
+    $("feedHeading").innerHTML = "<strong style='font-size:17px'>Videos</strong><p class='muted'>Videos shared in posts appear here.</p>";
+  } else if (activeMode === "saved") {
+    $("feedHeading").innerHTML = "<strong style='font-size:17px'>Saved posts</strong><p class='muted'>Saved posts are stored in this browser only.</p>";
+  } else if (activeMode === "profile") {
+    $("feedHeading").innerHTML = "<strong style='font-size:17px'>My posts</strong><p class='muted'>Posts published by your account.</p>";
+  } else {
+    $("feedHeading").innerHTML = "<strong style='font-size:17px'>Latest posts</strong><span class='muted' style='display:block;margin-top:4px'>See what's happening in your community.</span>";
+  }
+
+  if (!posts.length) {
+    $("postsFeed").innerHTML = `<div class="card empty"><i class="fa-regular fa-newspaper"></i>
+      <p><strong>No posts to show</strong></p><p class="muted">Create a post or try a different search.</p></div>`;
     return;
   }
 
-  el("feedStatus").textContent =
-    postCache.length + " recent post(s)";
+  $("postsFeed").innerHTML = posts.map(post => {
+    const ownPost = post.user_id === currentUser.id;
+    const postId = escapeHTML(post.id);
+    const liked = post.likes.some(like => like.user_id === currentUser.id);
+    const isSaved = savedPostIds.has(String(post.id));
+    const media = post.image_url ? renderMedia(post.image_url) : "";
+    const commentHTML = post.comments.map(comment => `
+      <div class="comment-row">
+        ${avatarHTML(comment.profile)}
+        <div class="comment-bubble">
+          <div class="comment-name">${escapeHTML(comment.profile?.full_name || "CircleUp member")}</div>
+          <div>${escapeHTML(comment.content)}</div>
+        </div>
+      </div>`).join("");
 
-  feed.innerHTML = postCache.map(p => {
-    const mine = p.user_id === currentUser.id;
-    const liked = p.likes.some(l => l.user_id === currentUser.id);
-
-    const commentHtml = p.comments.map(c =>
-      `<div class="comment">
-        <strong>${safe(c.author)}</strong>
-        <div>${safe(c.content)}</div>
-      </div>`
-    ).join("");
-
-    return `<article class="post">
+    return `<article class="card post-card" data-post-id="${postId}">
       <div class="post-head">
-        <div class="avatar">${safe(initials(p.author))}</div>
-        <div style="flex:1;min-width:0">
-          <strong>${safe(p.author)}</strong>
-          <div class="small">${safe(new Date(p.created_at).toLocaleString())}</div>
+        ${avatarHTML(post.profile)}
+        <div style="min-width:0">
+          <div class="post-author">${escapeHTML(post.profile?.full_name || "CircleUp member")}</div>
+          <div class="post-time">${escapeHTML(formatDate(post.created_at))} · <i class="fa-solid fa-earth-americas"></i></div>
         </div>
-        ${mine ? `<button class="danger" onclick="deletePost('${p.id}')">Delete</button>` : ""}
+        <button class="post-menu" data-action="menu" data-id="${postId}" title="Post options"><i class="fa-solid fa-ellipsis"></i></button>
       </div>
-
-      <div class="post-text">${safe(p.content)}</div>
-
-      ${p.image_url ? `<p><a href="${safe(p.image_url)}" target="_blank" rel="noopener noreferrer">Open attached link</a></p>` : ""}
-
+      ${post.content ? `<div class="post-content">${escapeHTML(post.content)}</div>` : ""}
+      ${media}
+      <div class="post-stats">
+        <span><i class="fa-solid fa-thumbs-up" style="color:#1877f2"></i> ${post.likes.length}</span>
+        <span>${post.comments.length} comments</span>
+      </div>
       <div class="post-actions">
-        <button class="${liked ? "liked" : ""}" onclick="toggleLike('${p.id}',${liked})">
-          ${liked ? "♥ Liked" : "♡ Like"} · ${p.likes.length}
+        <button class="action-btn ${liked ? "liked" : ""}" data-action="like" data-id="${postId}">
+          <i class="${liked ? "fa-solid" : "fa-regular"} fa-thumbs-up"></i> ${liked ? "Liked" : "Like"}
         </button>
-        <button onclick="document.getElementById('comment-${p.id}').focus()">
-          Comment · ${p.comments.length}
+        <button class="action-btn" data-action="comment-focus" data-id="${postId}">
+          <i class="fa-regular fa-comment"></i> Comment
+        </button>
+        <button class="action-btn" data-action="save" data-id="${postId}">
+          <i class="${isSaved ? "fa-solid" : "fa-regular"} fa-bookmark"></i> ${isSaved ? "Saved" : "Save"}
         </button>
       </div>
-
       <div class="comments">
-        ${commentHtml}
-        <div class="comment-form">
-          <input id="comment-${p.id}" placeholder="Write a comment..." maxlength="2000">
-          <button class="primary" onclick="addComment('${p.id}')">Send</button>
-        </div>
+        ${commentHTML}
+        <form class="comment-form" data-post-id="${postId}">
+          <input name="comment" placeholder="Write a comment..." maxlength="2000" required>
+          <button type="submit">Send</button>
+        </form>
       </div>
     </article>`;
   }).join("");
 }
 
-/* CREATE POST */
-async function createPost() {
-  const content = el("postContent").value.trim();
-
-  if (!content) {
-    alert("Please write something first.");
-    return;
-  }
-
-  el("publishBtn").disabled = true;
-
-  try {
-    const {error} = await db.from("posts").insert({
-      user_id: currentUser.id,
-      content: content
-    });
-
-    if (error) throw error;
-
-    el("postContent").value = "";
-    await loadFeed();
-  } catch (error) {
-    alert("Post failed: " + error.message);
-  } finally {
-    el("publishBtn").disabled = false;
-  }
+function isVideoURL(url) {
+  return /\.(mp4|webm|mov)(\?|$)/i.test(url || "");
 }
 
-/* LIKE OR UNLIKE */
-async function toggleLike(postId, alreadyLiked) {
-  let result;
-
-  if (alreadyLiked) {
-    result = await db.from("likes").delete()
-      .eq("post_id", postId)
-      .eq("user_id", currentUser.id);
-  } else {
-    result = await db.from("likes").insert({
-      post_id: postId,
-      user_id: currentUser.id
-    });
+function renderMedia(url) {
+  const safeUrl = escapeHTML(url);
+  if (isVideoURL(url)) {
+    return `<video class="post-media" src="${safeUrl}" controls playsinline preload="metadata"></video>`;
   }
-
-  if (result.error) {
-    alert("Like update failed: " + result.error.message);
-    return;
-  }
-
-  await loadFeed();
+  return `<img class="post-media" src="${safeUrl}" alt="Post media" loading="lazy">`;
 }
 
-/* ADD COMMENT */
-async function addComment(postId) {
-  const input = el("comment-" + postId);
-  const content = input.value.trim();
+/* ---------------- POST ACTIONS ---------------- */
 
-  if (!content) return;
+$("postsFeed").addEventListener("click", async event => {
+  const button = event.target.closest("[data-action]");
+  if (!button) return;
 
-  const {error} = await db.from("comments").insert({
-    post_id: postId,
-    user_id: currentUser.id,
-    content: content
-  });
+  const action = button.dataset.action;
+  const postId = button.dataset.id;
+  const post = allPosts.find(p => String(p.id) === String(postId));
+  if (!post) return;
 
-  if (error) {
-    alert("Comment failed: " + error.message);
-    return;
-  }
-
-  await loadFeed();
-}
-
-/* DELETE OWN POST */
-async function deletePost(postId) {
-  if (!confirm("Delete this post?")) return;
-
-  const {error} = await db.from("posts").delete()
-    .eq("id", postId)
-    .eq("user_id", currentUser.id);
-
-  if (error) {
-    alert("Delete failed: " + error.message);
-    return;
-  }
-
-  await loadFeed();
-}
-
-/* NOTIFICATIONS */
-async function loadNotifications() {
-  if (!currentUser) return;
-
-  el("notificationPanel").classList.remove("hidden");
-  el("notificationList").textContent = "Loading...";
-
-  const {data, error} = await db.from("notifications")
-    .select("id,actor_id,post_id,type,message,is_read,created_at")
-    .eq("user_id", currentUser.id)
-    .order("created_at", {ascending:false})
-    .limit(30);
-
-  if (error) {
-    el("notificationList").textContent =
-      "Could not load notifications: " + error.message;
-    return;
-  }
-
-  const notes = data || [];
-  const unread = notes.filter(n => !n.is_read).length;
-
-  el("notificationCount").textContent = unread ? "(" + unread + ")" : "";
-
-  if (!notes.length) {
-    el("notificationList").textContent = "No notifications yet.";
-    return;
-  }
-
-  el("notificationList").innerHTML = notes.map(n =>
-    `<div class="comment" style="${n.is_read ? "" : "border-left:3px solid #2463eb"}">
-      ${safe(n.message || "You have a new notification")}
-      <div class="small">${safe(new Date(n.created_at).toLocaleString())}</div>
-    </div>`
-  ).join("");
-}
-
-async function markNotificationsRead() {
-  const {error} = await db.from("notifications")
-    .update({is_read:true})
-    .eq("user_id", currentUser.id)
-    .eq("is_read", false);
-
-  if (error) {
-    alert("Could not update notifications: " + error.message);
-    return;
-  }
-
-  await loadNotifications();
-}
-
-/* START WEBSITE */
-async function init() {
-  try {
-    const {data, error} = await db.auth.getSession();
-
-    if (error) throw error;
-
-    if (data.session) {
-      currentUser = data.session.user;
-      await startApp();
-    } else {
-      showAuth();
+  if (action === "like") {
+    button.disabled = true;
+    try {
+      const existing = post.likes.find(like => like.user_id === currentUser.id);
+      if (existing) {
+        const { error } = await db.from("likes")
+          .delete().eq("post_id", post.id).eq("user_id", currentUser.id);
+        if (error) throw error;
+      } else {
+        const { error } = await db.from("likes")
+          .insert({ post_id: post.id, user_id: currentUser.id });
+        if (error) throw error;
+      }
+      await loadPosts();
+    } catch (error) {
+      showToast("Like failed: " + friendlyError(error));
+      button.disabled = false;
     }
-  } catch (error) {
-    showAuth();
-    showMessage(
-      "Could not connect to Supabase: " + error.message,
-      true
-    );
   }
-}
 
-db.auth.onAuthStateChange((event, session) => {
-  if (event === "SIGNED_OUT") {
-    currentUser = null;
-    currentProfile = null;
-    showAuth();
+  if (action === "comment-focus") {
+    const input = button.closest(".post-card")?.querySelector('input[name="comment"]');
+    input?.focus();
+  }
+
+  if (action === "save") {
+    if (savedPostIds.has(String(post.id))) savedPostIds.delete(String(post.id));
+    else savedPostIds.add(String(post.id));
+    renderPosts();
+    showToast(savedPostIds.has(String(post.id))
+      ? "Post saved in this browser."
+      : "Post removed from saved posts.");
+  }
+
+  if (action === "menu") {
+    if (post.user_id !== currentUser.id) {
+      showToast("You can delete only your own posts.");
+      return;
+    }
+    if (!confirm("Delete this post? This cannot be undone.")) return;
+
+    try {
+      const { error } = await db.from("posts")
+        .delete().eq("id", post.id).eq("user_id", currentUser.id);
+      if (error) throw error;
+      await loadPosts();
+      showToast("Post deleted.");
+    } catch (error) {
+      showToast("Delete failed: " + friendlyError(error));
+    }
   }
 });
 
-init();
+$("postsFeed").addEventListener("submit", async event => {
+  const form = event.target.closest(".comment-form");
+  if (!form) return;
+  event.preventDefault();
+
+  const input = form.querySelector('input[name="comment"]');
+  const content = input.value.trim();
+  const postId = form.dataset.postId;
+  if (!content) return;
+
+  const button = form.querySelector("button");
+  button.disabled = true;
+
+  try {
+    const { error } = await db.from("comments").insert({
+      post_id: postId,
+      user_id: currentUser.id,
+      content
+    });
+    if (error) throw error;
+    await loadPosts();
+    showToast("Comment added.");
+  } catch (error) {
+    showToast("Comment failed: " + friendlyError(error));
+  } finally {
+    button.disabled = false;
+  }
+});
+
+/* ---------------- NAVIGATION ---------------- */
+
+function navigate(mode) {
+  activeMode = mode;
+  document.querySelectorAll("[data-nav]").forEach(el => {
+    el.classList.toggle("active", el.dataset.nav === mode);
+  });
+  if (mode === "home") $("composer").classList.remove("hidden");
+  else $("composer").classList.add("hidden");
+
+  if (mode === "profile") $("composer").classList.remove("hidden");
+  if (mode === "saved") $("composer").classList.add("hidden");
+
+  renderPosts();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+document.querySelectorAll("[data-nav]").forEach(el => {
+  el.addEventListener("click", event => {
+    event.preventDefault();
+    navigate(el.dataset.nav);
+  });
+});
+
+$("savedLink").addEventListener("click", event => {
+  event.preventDefault();
+  navigate("saved");
+});
+$("refreshLink").addEventListener("click", async event => {
+  event.preventDefault();
+  await loadPosts();
+  showToast("Feed refreshed.");
+});
+$("searchInput").addEventListener("input", renderPosts);
+
+/* ---------------- START APP ---------------- */
+
+async function enterApp() {
+  $("authScreen").classList.add("hidden");
+  $("appScreen").classList.remove("hidden");
+
+  try {
+    await ensureProfile();
+    updateProfileUI();
+  } catch (error) {
+    console.warn("Profile could not be loaded:", error);
+    currentProfile = {
+      id: currentUser.id,
+      full_name: currentUser.user_metadata?.full_name ||
+        currentUser.email?.split("@")[0] || "CircleUp member",
+      bio: "",
+      avatar_url: ""
+    };
+    updateProfileUI();
+    showToast("Profile details could not be loaded. Check profiles table permissions.", 6000);
+  }
+
+  await loadPosts();
+}
+
+db.auth.onAuthStateChange((event, session) => {
+  if (session?.user) {
+    currentUser = session.user;
+    if ($("appScreen").classList.contains("hidden")) {
+      setTimeout(() => enterApp(), 0);
+    }
+  } else {
+    currentUser = null;
+    currentProfile = null;
+    $("appScreen").classList.add("hidden");
+    $("authScreen").classList.remove("hidden");
+  }
+});
+
+(async function init() {
+  const { data, error } = await db.auth.getSession();
+  if (error) {
+    showAuthError(friendlyError(error));
+    return;
+  }
+  if (data.session?.user) {
+    currentUser = data.session.user;
+    await enterApp();
+  } else {
+    setAuthMode(false);
+  }
+})();
 </script>
 </body>
 </html>
