@@ -168,10 +168,10 @@ button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity
 <div id="toast" class="hidden"></div>
 
 <script>
-const SUPABASE_URL = "https://wwbscgnwbcuwoaihxdtc.supabase.co";
+const SUPABASE_URL = "https://wwbscgnwbcuwoaihxdtc.supabaseClient.co";
 const SUPABASE_KEY = "sb_publishable_fmDJ0C1Xib_DxMwnQWkesA_JU8WiXx8";
 
-const supabase = window.supabase.createClient(
+const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
@@ -250,7 +250,7 @@ $("authForm").onsubmit=async e=>{
   if(signupMode) {
    const name=$("nameInput").value.trim();
    if(!name) throw new Error("Please enter your name.");
-   result=await supabase.auth.signUp({email,password,options:{data:{full_name:name}}});
+   result=await supabaseClient.auth.signUp({email,password,options:{data:{full_name:name}}});
    if(result.error) throw result.error;
    if(!result.data.session) {
     $("authError").textContent="Signup submitted. Check your email to confirm your account before logging in.";
@@ -259,7 +259,7 @@ $("authForm").onsubmit=async e=>{
    }
    user=result.data.user;
   } else {
-   result=await supabase.auth.signInWithPassword({email,password});
+   result=await supabaseClient.auth.signInWithPassword({email,password});
    if(result.error) throw result.error;
    user=result.data.user;
   }
@@ -271,20 +271,20 @@ $("authForm").onsubmit=async e=>{
 };
 
 $("logout").onclick=async()=>{
- const {error}=await supabase.auth.signOut();
+ const {error}=await supabaseClient.auth.signOut();
  if(error) return toast(errText(error));
  user=null;profile=null;
  $("app").classList.add("hidden");$("auth").classList.remove("hidden");
 };
 
 async function loadProfile() {
- const {data,error}=await supabase.from("profiles")
+ const {data,error}=await supabaseClient.from("profiles")
   .select("id,full_name,bio,avatar_url,cover_url").eq("id",user.id).maybeSingle();
  if(error) throw error;
  if(data) profile=data;
  else {
   const row={id:user.id,full_name:user.user_metadata?.full_name||user.email?.split("@")[0]||"CircleUp member",bio:"",avatar_url:"",cover_url:""};
-  const r=await supabase.from("profiles").upsert(row).select("id,full_name,bio,avatar_url,cover_url").single();
+  const r=await supabaseClient.from("profiles").upsert(row).select("id,full_name,bio,avatar_url,cover_url").single();
   if(r.error) throw r.error;
   profile=r.data;
  }
@@ -306,7 +306,7 @@ $("editProfile").onclick=async()=>{
  if(!name.trim()) return toast("Name cannot be empty.");
  const bio=prompt("Your bio",profile?.bio||"");
  if(bio===null) return;
- const {data,error}=await supabase.from("profiles").update({full_name:name.trim(),bio:bio.trim()}).eq("id",user.id).select().single();
+ const {data,error}=await supabaseClient.from("profiles").update({full_name:name.trim(),bio:bio.trim()}).eq("id",user.id).select().single();
  if(error) return toast(errText(error));
  profile=data;updateProfileUI();toast("Profile updated.");
 };
@@ -314,9 +314,9 @@ $("editProfile").onclick=async()=>{
 async function uploadFile(bucket,file) {
  const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
  const path=`${user.id}/${Date.now()}-${crypto.randomUUID()}-${safe}`;
- const {error}=await supabase.storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type,cacheControl:"3600"});
+ const {error}=await supabaseClient.storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type,cacheControl:"3600"});
  if(error) throw error;
- return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+ return supabaseClient.storage.from(bucket).getPublicUrl(path).data.publicUrl;
 }
 async function updateProfileMedia(field,bucket,accept) {
  const input=document.createElement("input");
@@ -326,7 +326,7 @@ async function updateProfileMedia(field,bucket,accept) {
   if(file.size>10*1024*1024) return toast("Profile and cover images must be under 10 MB.");
   try {
    const url=await uploadFile(bucket,file);
-   const {data,error}=await supabase.from("profiles").update({[field]:url}).eq("id",user.id).select().single();
+   const {data,error}=await supabaseClient.from("profiles").update({[field]:url}).eq("id",user.id).select().single();
    if(error) throw error;
    profile=data;updateProfileUI();toast("Profile updated.");
   } catch(e){toast(errText(e));}
@@ -363,7 +363,7 @@ $("publish").onclick=async()=>{
  $("uploadStatus").classList.remove("hidden");
  try {
   const media=file?await uploadFile(BUCKET_POST,file):null;
-  const {error}=await supabase.from("posts").insert({user_id:user.id,content,image_url:media});
+  const {error}=await supabaseClient.from("posts").insert({user_id:user.id,content,image_url:media});
   if(error) throw error;
   $("postContent").value="";$("mediaInput").value="";clearPreview();
   await loadFeed();toast("Post published.");
@@ -372,27 +372,27 @@ $("publish").onclick=async()=>{
 };
 
 async function loadFeed() {
- const {data:posts,error}=await supabase.from("posts")
+ const {data:posts,error}=await supabaseClient.from("posts")
   .select("id,user_id,content,image_url,created_at").order("created_at",{ascending:false}).limit(100);
  if(error) throw error;
  postsCache=posts||[];
  const ids=[...new Set(postsCache.map(p=>p.user_id).filter(Boolean))];
  profilesCache={};
  if(ids.length) {
-  const p=await supabase.from("profiles").select("id,full_name,bio,avatar_url,cover_url").in("id",ids);
+  const p=await supabaseClient.from("profiles").select("id,full_name,bio,avatar_url,cover_url").in("id",ids);
   if(p.error) throw p.error;
   (p.data||[]).forEach(x=>profilesCache[x.id]=x);
  }
  let likes=[],comments=[];
  if(postsCache.length) {
   const postIds=postsCache.map(p=>p.id);
-  const l=await supabase.from("likes").select("post_id,user_id").in("post_id",postIds);
+  const l=await supabaseClient.from("likes").select("post_id,user_id").in("post_id",postIds);
   if(!l.error) likes=l.data||[];
-  const c=await supabase.from("comments").select("id,post_id,user_id,content,created_at").in("post_id",postIds).order("created_at");
+  const c=await supabaseClient.from("comments").select("id,post_id,user_id,content,created_at").in("post_id",postIds).order("created_at");
   if(!c.error) comments=c.data||[];
   const cids=[...new Set(comments.map(c=>c.user_id).filter(Boolean))].filter(id=>!profilesCache[id]);
   if(cids.length) {
-   const extra=await supabase.from("profiles").select("id,full_name,avatar_url").in("id",cids);
+   const extra=await supabaseClient.from("profiles").select("id,full_name,avatar_url").in("id",cids);
    if(!extra.error) (extra.data||[]).forEach(x=>profilesCache[x.id]=x);
   }
  }
@@ -445,8 +445,8 @@ $("feed").addEventListener("click",async e=>{
    b.disabled=true;
    const exists=post.likes.some(l=>l.user_id===user.id);
    const result=exists
-    ?await supabase.from("likes").delete().eq("post_id",post.id).eq("user_id",user.id)
-    :await supabase.from("likes").insert({post_id:post.id,user_id:user.id});
+    ?await supabaseClient.from("likes").delete().eq("post_id",post.id).eq("user_id",user.id)
+    :await supabaseClient.from("likes").insert({post_id:post.id,user_id:user.id});
    if(result.error)throw result.error;
    if(!exists && post.user_id!==user.id) await addNotification(post.user_id,post.id,"like",`${profile.full_name} liked your post.`);
    await loadFeed();
@@ -454,7 +454,7 @@ $("feed").addEventListener("click",async e=>{
   if(action==="delete") {
    if(post.user_id!==user.id)return toast("You can delete only your own posts.");
    if(!confirm("Delete this post?"))return;
-   const r=await supabase.from("posts").delete().eq("id",post.id).eq("user_id",user.id);
+   const r=await supabaseClient.from("posts").delete().eq("id",post.id).eq("user_id",user.id);
    if(r.error)throw r.error;
    await loadFeed();toast("Post deleted.");
   }
@@ -466,7 +466,7 @@ $("feed").addEventListener("submit",async e=>{
  const input=form.querySelector("input"),content=input.value.trim();if(!content)return;
  try {
   const post=postsCache.find(p=>String(p.id)===String(form.dataset.id));
-  const r=await supabase.from("comments").insert({post_id:form.dataset.id,user_id:user.id,content});
+  const r=await supabaseClient.from("comments").insert({post_id:form.dataset.id,user_id:user.id,content});
   if(r.error)throw r.error;
   if(post&&post.user_id!==user.id)await addNotification(post.user_id,post.id,"comment",`${profile.full_name} commented on your post.`);
   await loadFeed();toast("Comment added.");
@@ -475,7 +475,7 @@ $("feed").addEventListener("submit",async e=>{
 
 async function addNotification(recipient,postId,type,message) {
  if(!recipient||recipient===user.id)return;
- const r=await supabase.from("notifications").insert({
+ const r=await supabaseClient.from("notifications").insert({
   user_id:recipient,actor_id:user.id,post_id:postId,type,message,is_read:false
  });
  if(r.error)console.warn("Notification was not saved:",r.error.message);
@@ -483,7 +483,7 @@ async function addNotification(recipient,postId,type,message) {
 
 /* STORIES */
 async function loadStories() {
- const r=await supabase.from("stories")
+ const r=await supabaseClient.from("stories")
   .select("id,user_id,media_url,media_type,caption,created_at,expires_at")
   .gt("expires_at",new Date().toISOString()).order("created_at",{ascending:false}).limit(50);
  if(r.error){console.warn("Stories:",r.error.message);return;}
@@ -508,7 +508,7 @@ $("storyInput").onchange=async()=>{
  if(file.size>max*1024*1024)return toast(`Maximum file size: ${max} MB.`);
  try {
   const url=await uploadFile(BUCKET_STORY,file);
-  const r=await supabase.from("stories").insert({
+  const r=await supabaseClient.from("stories").insert({
    user_id:user.id,media_url:url,media_type:file.type.startsWith("video/")?"video":"image",
    expires_at:new Date(Date.now()+24*60*60*1000).toISOString()
   });
@@ -530,19 +530,19 @@ function showStory(id) {
 async function renderFriends() {
  $("feed").innerHTML='<div class="card"><div class="sectiontitle">People</div><p class="muted">Search for members using the search bar above.</p><div id="peopleResults"></div><hr class="rule"><div class="sectiontitle">Incoming requests</div><div id="incomingRequests"></div><hr class="rule"><div class="sectiontitle">Your friends</div><div id="friendsList"></div></div>';
  await searchPeople($("searchInput").value.trim());
- const incoming=await supabase.from("friend_requests").select("*").eq("recipient_id",user.id).eq("status","pending").order("created_at",{ascending:false});
+ const incoming=await supabaseClient.from("friend_requests").select("*").eq("recipient_id",user.id).eq("status","pending").order("created_at",{ascending:false});
  const inc=$("incomingRequests");
  if(incoming.error){inc.textContent=errText(incoming.error);}
  else if(!incoming.data?.length){inc.innerHTML='<p class="muted">No pending friend requests.</p>';}
  else {
   const ids=incoming.data.map(x=>x.requester_id);
-  const pr=await supabase.from("profiles").select("id,full_name,avatar_url").in("id",ids);
+  const pr=await supabaseClient.from("profiles").select("id,full_name,avatar_url").in("id",ids);
   const map={};(pr.data||[]).forEach(p=>map[p.id]=p);
   inc.innerHTML=incoming.data.map(req=>`<div class="person">${avatar(map[req.requester_id])}<div class="grow"><b>${esc(map[req.requester_id]?.full_name||"Member")}</b></div><button class="btn blue" data-accept="${req.id}">Accept</button><button class="btn" data-reject="${req.id}">Reject</button></div>`).join("");
   inc.querySelectorAll("[data-accept]").forEach(b=>b.onclick=()=>answerRequest(b.dataset.accept,"accepted"));
   inc.querySelectorAll("[data-reject]").forEach(b=>b.onclick=()=>answerRequest(b.dataset.reject,"rejected"));
  }
- const accepted=await supabase.from("friend_requests").select("*").eq("status","accepted").or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+ const accepted=await supabaseClient.from("friend_requests").select("*").eq("status","accepted").or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
  const fl=$("friendsList");
  if(accepted.error){fl.textContent=errText(accepted.error);}
  else {
@@ -550,7 +550,7 @@ async function renderFriends() {
   friendsCache=ids;
   if(!ids.length)fl.innerHTML='<p class="muted">No friends yet. Find people and send a request.</p>';
   else {
-   const pr=await supabase.from("profiles").select("id,full_name,avatar_url").in("id",ids);
+   const pr=await supabaseClient.from("profiles").select("id,full_name,avatar_url").in("id",ids);
    fl.innerHTML=(pr.data||[]).map(p=>`<div class="person">${avatar(p)}<b>${esc(p.full_name)}</b></div>`).join("");
   }
  }
@@ -558,11 +558,11 @@ async function renderFriends() {
 async function searchPeople(term) {
  const el=$("peopleResults");if(!el)return;
  if(!term){el.innerHTML='<p class="muted">Type a name in the search box to find people.</p>';return;}
- const r=await supabase.from("profiles").select("id,full_name,bio,avatar_url").ilike("full_name",`%${term.replace(/[%_]/g,"\\$&")}%`).neq("id",user.id).limit(20);
+ const r=await supabaseClient.from("profiles").select("id,full_name,bio,avatar_url").ilike("full_name",`%${term.replace(/[%_]/g,"\\$&")}%`).neq("id",user.id).limit(20);
  if(r.error){el.textContent=errText(r.error);return;}
  if(!r.data?.length){el.innerHTML='<p class="muted">No matching people found.</p>';return;}
  const ids=r.data.map(p=>p.id);
- const req=await supabase.from("friend_requests").select("requester_id,recipient_id,status").or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+ const req=await supabaseClient.from("friend_requests").select("requester_id,recipient_id,status").or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
  const requests=req.data||[];
  el.innerHTML=r.data.map(p=>{
   const existing=requests.find(x=>(x.requester_id===p.id&&x.recipient_id===user.id)||(x.requester_id===user.id&&x.recipient_id===p.id));
@@ -574,14 +574,14 @@ async function searchPeople(term) {
 }
 async function sendRequest(recipient) {
  try {
-  const r=await supabase.from("friend_requests").insert({requester_id:user.id,recipient_id:recipient,status:"pending"});
+  const r=await supabaseClient.from("friend_requests").insert({requester_id:user.id,recipient_id:recipient,status:"pending"});
   if(r.error)throw r.error;
   toast("Friend request sent.");await renderFriends();
  } catch(e){toast(errText(e));}
 }
 async function answerRequest(id,status) {
  try {
-  const r=await supabase.from("friend_requests").update({status,updated_at:new Date().toISOString()}).eq("id",id).eq("recipient_id",user.id);
+  const r=await supabaseClient.from("friend_requests").update({status,updated_at:new Date().toISOString()}).eq("id",id).eq("recipient_id",user.id);
   if(r.error)throw r.error;
   toast(status==="accepted"?"Friend request accepted.":"Friend request rejected.");
   await renderFriends();
@@ -590,12 +590,12 @@ async function answerRequest(id,status) {
 
 /* NOTIFICATIONS */
 async function renderNotifications() {
- const r=await supabase.from("notifications").select("id,actor_id,post_id,type,message,is_read,created_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50);
+ const r=await supabaseClient.from("notifications").select("id,actor_id,post_id,type,message,is_read,created_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50);
  if(r.error){$("feed").innerHTML=`<div class="card">${esc(errText(r.error))}</div>`;return;}
  if(!r.data?.length){$("feed").innerHTML='<div class="card empty">No notifications yet.</div>';return;}
  $("feed").innerHTML=r.data.map(n=>`<div class="card ${n.is_read?"":"notice"}"><div class="row"><div class="grow">${esc(n.message||"New activity")}<div class="muted">${esc(dateText(n.created_at))}</div></div>${n.is_read?"":`<button class="btn" data-read="${esc(n.id)}">Mark read</button>`}</div></div>`).join("");
  $("feed").querySelectorAll("[data-read]").forEach(b=>b.onclick=async()=>{
-  const u=await supabase.from("notifications").update({is_read:true}).eq("id",b.dataset.read).eq("user_id",user.id);
+  const u=await supabaseClient.from("notifications").update({is_read:true}).eq("id",b.dataset.read).eq("user_id",user.id);
   if(u.error)return toast(errText(u.error));
   await renderNotifications();
  });
@@ -626,7 +626,7 @@ async function startApp() {
   toast("Could not load CircleUp: "+errText(e));
  }
 }
-supabase.auth.onAuthStateChange((event,session)=>{
+supabaseClient.auth.onAuthStateChange((event,session)=>{
  if(session?.user) {
   user=session.user;
   if($("app").classList.contains("hidden"))setTimeout(()=>startApp(),0);
@@ -636,7 +636,7 @@ supabase.auth.onAuthStateChange((event,session)=>{
  }
 });
 (async()=>{
- const {data,error}=await supabase.auth.getSession();
+ const {data,error}=await supabaseClient.auth.getSession();
  if(error){$("authError").textContent=errText(error);$("authError").classList.remove("hidden");return;}
  if(data.session?.user){user=data.session.user;await startApp();}
  else authMode(false);
