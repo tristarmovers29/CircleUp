@@ -70,6 +70,54 @@ button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity
 .righttitle{font-weight:bold;margin-bottom:12px}
 @media(max-width:1100px){.layout{grid-template-columns:205px minmax(0,660px)}.rightside{display:none}}
 @media(max-width:700px){.top{height:56px;padding:0 9px;gap:9px}.logo{font-size:21px}.search{width:40px;height:40px;padding:10px;flex-shrink:0}.search input{display:none}.tabs{display:none}.topright{margin-left:auto}.layout{display:block;padding:10px 0 20px}.leftside,.rightside{display:none}.card{border-radius:0;margin-bottom:9px}.postmedia{width:calc(100% + 26px);margin:0 -13px}.authwrap{display:block;max-width:390px}.authintro{text-align:center;margin-bottom:20px}.authintro h1{font-size:43px}.authintro p{font-size:16px}.authbox{padding:18px}}
+
+/* CircleUp Facebook-inspired visual upgrade — presentation only; existing JS/Supabase logic preserved */
+:root{--blue:#1877f2;--bg:#f0f2f5;--white:#fff;--text:#1c1e21;--muted:#65676b;--line:#dddfe2;--navblue:#0866ff}
+body{background:#f0f2f5;color:#1c1e21;font-family:Arial,Helvetica,sans-serif}
+.top{height:60px;background:#fff;gap:20px;padding:0 22px;box-shadow:0 1px 3px #0002}
+.logo{font-size:29px;letter-spacing:-.8px;color:#0866ff}
+.search{background:#f0f2f5;max-width:320px;border-radius:25px;padding:12px 16px}
+.search:focus-within{box-shadow:0 0 0 2px #d7e7ff}
+.tabs{max-width:620px;margin:0 auto;gap:8px}
+.tabs button{position:relative;min-width:70px;border-radius:8px 8px 0 0;font-size:22px;transition:background .15s,color .15s}
+.tabs button:hover{background:#f0f2f5}
+.tabs button.active{color:#0866ff;border-bottom:3px solid #0866ff}
+.iconbtn{background:#e4e6eb;color:#1c1e21;transition:background .15s}
+.iconbtn:hover{background:#d8dadf}
+.layout{max-width:1600px;grid-template-columns:250px minmax(0,680px) 300px;gap:24px;padding:20px 24px;justify-content:center}
+.side{top:78px;max-height:calc(100vh - 88px);scrollbar-width:thin}
+.card{border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 1px 2px #00000012;border:1px solid #e4e6eb}
+.sideitem{padding:12px 13px;border-radius:10px;transition:background .15s}
+.sideitem:hover{background:#e4e6eb}
+.sideitem:active,.sideitem.active{background:#e7f0ff;color:#0866ff}
+.profile{overflow:hidden}
+.cover{height:100px;background:linear-gradient(125deg,#0866ff,#6aa8ff)}
+.avatar{border:1px solid #e4e6eb}
+.btn{transition:filter .15s,transform .15s;border-radius:8px}
+.btn:hover{filter:brightness(.97)}
+.btn:active{transform:scale(.98)}
+.storyrail{gap:10px;scrollbar-width:thin}
+.story{min-width:112px;width:112px;height:178px;border-radius:12px;box-shadow:0 1px 3px #0002;transition:transform .15s}
+.story:hover{transform:translateY(-2px)}
+.story:after{background:linear-gradient(transparent 45%,#000b)}
+#composer{padding:18px}
+.pillinput{background:#f0f2f5;transition:background .15s}
+.pillinput:hover{background:#e7e9ed}
+.action{font-size:14px}
+.posthead{gap:11px}
+.posttext{font-size:15px;line-height:1.55}
+.postmedia{max-height:680px;background:#f0f2f5}
+.poststats{font-size:13px}
+.postactions button{font-size:14px;transition:background .15s}
+.comment .avatar{width:36px;height:36px}
+.bubble{background:#f0f2f5;border-radius:16px;padding:10px 13px;line-height:1.45}
+.commentform input{background:#f0f2f5}
+.authbox{border:1px solid #e4e6eb;box-shadow:0 8px 28px #00000012}
+#toast{box-shadow:0 4px 18px #0003}
+@media(min-width:1400px){.layout{grid-template-columns:250px minmax(0,680px) 300px;gap:26px}}
+@media(max-width:1100px){.layout{grid-template-columns:215px minmax(0,680px);gap:16px;padding:16px}.top{padding:0 14px}.tabs button{min-width:54px}}
+@media(max-width:700px){.top{height:56px;padding:0 10px;gap:9px}.logo{font-size:22px}.layout{display:block;padding:8px 0 18px}.card{border-radius:0;border-left:0;border-right:0;margin-bottom:9px}.story{min-width:100px;width:100px;height:155px}.postmedia{width:calc(100% + 26px);margin:0 -13px}.authwrap{display:block;max-width:390px}.authintro{text-align:center;margin-bottom:20px}.authintro h1{font-size:43px}.authintro p{font-size:16px}.authbox{padding:18px;border-radius:12px}}
+
 </style>
 </head>
 <body>
@@ -158,8 +206,8 @@ button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity
   </main>
 
   <aside class="side rightside">
-   <div class="card"><div class="righttitle">Find your people</div><p class="muted">Search for CircleUp members and send friend requests.</p><button class="btn blue full" data-page="friends">Explore people</button></div>
-   <div class="card"><div class="righttitle">Community tips</div><p class="muted">Share respectfully, use media you have permission to post, and keep your account secure.</p></div>
+   <div class="card"><div class="righttitle">People you may know</div><p class="muted">Find friends and grow your CircleUp community.</p><button class="btn blue full" data-page="friends"><i class="fa fa-user-plus"></i> Find friends</button></div>
+   <div class="card"><div class="righttitle"><i class="fa fa-users" style="color:#1877f2"></i> Your community</div><p class="muted">Share moments, react to posts, comment and stay connected with people you care about.</p><hr class="rule"><div class="muted">CircleUp · Community · Privacy · Help</div></div>
    <div class="muted">CircleUp · Community · Privacy · Help</div>
   </aside>
  </div>
