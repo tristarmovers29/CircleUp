@@ -278,6 +278,60 @@ button,.btn,.action,.iconbtn,.sideitem{touch-action:manipulation;}
 @media(max-width:700px){.reels-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.reel-card{border-radius:9px}.reel-caption{font-size:13px;padding:8px}.reel-meta{padding:5px 8px 9px}.reels-intro{padding:13px}.reels-title{font-size:19px}}
 @media(max-width:390px){.reels-grid{grid-template-columns:1fr 1fr;gap:6px}.reel-video-wrap{aspect-ratio:9/13}}
 
+
+/* CircleUp Premium Finish — visual-only overrides; no Supabase or feature logic changed */
+:root{--blue:#0866ff;--bg:#f0f2f5;--text:#1c1e21;--muted:#65676b;--line:#e4e6eb}
+html{scroll-behavior:smooth}
+body{letter-spacing:.05px;-webkit-font-smoothing:antialiased}
+.top{display:flex;gap:clamp(8px,1.4vw,22px);padding-inline:clamp(10px,1.6vw,24px)}
+.logo{font-weight:850;letter-spacing:-1.3px}
+.search{transition:box-shadow .18s,border-color .18s}
+.tabs button{transition:all .18s ease}
+.iconbtn,.btn,.action,.postactions button,.sideitem{transition:background .18s ease,transform .18s ease,box-shadow .18s ease}
+.iconbtn:focus-visible,.btn:focus-visible,.action:focus-visible,.postactions button:focus-visible,.sideitem:focus-visible{outline:3px solid #0866ff55;outline-offset:2px}
+.layout{align-items:start}
+.side{scrollbar-width:thin;scrollbar-color:#c9ccd1 transparent}
+.card{overflow-wrap:anywhere}
+#composer{border-radius:16px}
+#composer .composerline{gap:12px}
+.pillinput{min-height:44px}
+.storyrail{scroll-snap-type:x proximity;padding:2px 1px 8px}
+.story{scroll-snap-align:start;isolation:isolate}
+.story img,.story video{transition:transform .3s ease}
+.story:hover img,.story:hover video{transform:scale(1.035)}
+.posthead .avatar,.comment .avatar{flex-shrink:0}
+.postmedia{max-width:100%;object-fit:contain}
+.postactions button{border-radius:9px;min-height:42px}
+.postactions button:active{transform:scale(.98)}
+.commentform input:focus,.chat-compose input:focus{box-shadow:0 0 0 2px #0866ff33;outline:1px solid #0866ff}
+.person{padding:7px;border-radius:11px;transition:background .15s}
+.person:hover{background:#f0f2f5}
+.btn.blue{background:#0866ff}
+#toast{bottom:max(18px,env(safe-area-inset-bottom));border-radius:14px;box-shadow:0 8px 28px #0003}
+/* Give short-video cards a distinct Reels-like presentation without changing upload logic */
+#videosGrid,#videoGrid,.videos-grid,.video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#videosGrid video,#videoGrid video,.videos-grid video,.video-grid video{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:12px;background:#111}
+@media(max-width:1100px){.layout{grid-template-columns:220px minmax(0,680px);gap:16px;padding:16px}.top{gap:10px}.tabs button{min-width:50px}}
+@media(max-width:700px){
+ .top{height:58px;padding:0 10px;gap:8px}
+ .logo{font-size:22px;letter-spacing:-.8px}
+ .search{height:40px;width:40px;min-width:40px;padding:10px;justify-content:center}
+ .topright{gap:5px}
+ .iconbtn{width:38px;height:38px}
+ .layout{padding:8px 0 calc(24px + env(safe-area-inset-bottom));}
+ .card{padding:14px;border-radius:12px;margin:0 8px 10px;border:1px solid #e4e6eb;box-shadow:0 1px 2px #0000000a}
+ #composer{padding:14px}
+ #storiesCard{padding:14px}
+ .story{min-width:94px;width:94px;height:148px}
+ .postmedia{width:calc(100% + 28px);margin:0 -14px;max-height:72vh}
+ .postactions button{font-size:13px;padding:10px 2px}
+ .sectiontitle,.righttitle{font-size:16px}
+ .authwrap{padding:4px}
+ #videosGrid,#videoGrid,.videos-grid,.video-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+}
+@media(max-width:380px){.top{gap:5px}.logo{font-size:20px}.topright .iconbtn{width:34px;height:34px}.card{margin-inline:5px}.postactions button{font-size:12px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+
 </style>
 </head>
 <body>
