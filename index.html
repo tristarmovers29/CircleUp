@@ -259,6 +259,25 @@ button,.btn,.action,.iconbtn,.sideitem{touch-action:manipulation;}
 .chat-compose button{border:0;border-radius:22px;background:#1877f2;color:white;font-weight:700;padding:0 18px;cursor:pointer}
 @media(max-width:700px){.chat-shell{grid-template-columns:1fr;min-height:0}.chat-list{max-height:190px;overflow-y:auto}.chat-messages{height:48vh;min-height:220px}.chat-bubble{max-width:88%}.chat-compose{position:sticky;bottom:0;background:white}}
 
+
+/* Short funny videos / Reels-style page */
+.reels-intro{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px}
+.reels-title{font-size:21px;font-weight:800;display:flex;align-items:center;gap:9px}
+.reels-title i{color:#1877f2}
+.reels-subtitle{color:var(--muted);font-size:13px;margin-top:4px}
+.reels-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.reel-card{min-width:0;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:13px;box-shadow:0 2px 8px #14213d0b}
+.reel-video-wrap{position:relative;background:#101828;aspect-ratio:9/14;overflow:hidden}
+.reel-video{width:100%;height:100%;object-fit:cover;display:block;border-radius:0!important;max-height:none!important}
+.reel-playhint{position:absolute;top:10px;left:10px;background:#0009;color:#fff;padding:5px 8px;border-radius:20px;font-size:11px}
+.reel-caption{padding:10px 11px 4px;font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+.reel-meta{padding:6px 11px 11px;display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
+.reel-meta .avatar{width:27px;height:27px;flex-shrink:0}
+.reel-empty{padding:28px 18px;text-align:center}
+.reel-empty i{font-size:34px;color:#1877f2;margin-bottom:10px}
+@media(max-width:700px){.reels-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.reel-card{border-radius:9px}.reel-caption{font-size:13px;padding:8px}.reel-meta{padding:5px 8px 9px}.reels-intro{padding:13px}.reels-title{font-size:19px}}
+@media(max-width:390px){.reels-grid{grid-template-columns:1fr 1fr;gap:6px}.reel-video-wrap{aspect-ratio:9/13}}
+
 </style>
 </head>
 <body>
@@ -603,11 +622,17 @@ function renderFeed() {
  if(page==="videos") list=list.filter(p=>isVideo(p.image_url));
  if(page==="profile") list=list.filter(p=>p.user_id===user.id);
  if(term) list=list.filter(p=>(p.profile?.full_name||"").toLowerCase().includes(term)||(p.content||"").toLowerCase().includes(term));
- $("pageHeading").innerHTML=`<div class="sectiontitle">${page==="videos"?"Videos":page==="profile"?"My posts":page==="friends"?"People & friend requests":page==="notifications"?"Notifications":"Latest posts"}</div><div class="muted">${page==="friends"?"Search members and manage requests.":page==="notifications"?"Recent activity on CircleUp.":"Your community, all in one place."}</div>`;
- $("composer").classList.toggle("hidden",page!=="home"&&page!=="profile");
+ $("pageHeading").innerHTML=page==="videos"?`<div class="reels-intro"><div><div class="reels-title"><i class="fa fa-circle-play"></i> Short & Funny Videos</div><div class="reels-subtitle">Quick laughs from your CircleUp friends 😂</div></div><button class="btn blue" id="uploadFunnyVideo"><i class="fa fa-plus"></i> Add video</button></div>`:`<div class="sectiontitle">${page==="profile"?"My posts":page==="friends"?"People & friend requests":page==="notifications"?"Notifications":"Latest posts"}</div><div class="muted">${page==="friends"?"Search members and manage requests.":page==="notifications"?"Recent activity on CircleUp.":"Your community, all in one place."}</div>`;
+ if(page==="videos"){$("uploadFunnyVideo")?.addEventListener("click",()=>{$("mediaInput").accept="video/mp4,video/webm,video/quicktime";$("pickVideo").click();});}
+ $("composer").classList.toggle("hidden",page!=="home"&&page!=="profile"&&page!=="videos");
  $("storiesCard").classList.toggle("hidden",page!=="home");
  if(page==="friends"){renderFriends();return;}
  if(page==="notifications"){renderNotifications();return;}
+ if(page==="videos"){
+  if(!list.length){$("feed").innerHTML='<div class="card reel-empty"><i class="fa fa-film"></i><h3>No funny videos yet 😂</h3><p class="muted">Be the first to share a short, funny clip with your friends.</p><button class="btn blue" id="firstFunnyVideo"><i class="fa fa-video"></i> Upload a video</button><p class="muted" style="font-size:12px;margin-top:10px">MP4, WebM or MOV · Maximum 50 MB</p></div>';$("firstFunnyVideo")?.addEventListener("click",()=>{$("mediaInput").accept="video/mp4,video/webm,video/quicktime";$("pickVideo").click();});return;}
+  $("feed").innerHTML='<div class="reels-grid">'+list.map(p=>`<article class="reel-card" data-post="${esc(p.id)}"><div class="reel-video-wrap"><video class="reel-video" src="${esc(p.image_url)}" controls playsinline preload="metadata"></video><span class="reel-playhint"><i class="fa fa-play"></i> Short video</span></div>${p.content?`<div class="reel-caption">${esc(p.content)}</div>`:""}<div class="reel-meta">${avatar(p.profile)}<span>${esc(p.profile?.full_name||"CircleUp member")} · 👍 ${p.likes.length}</span></div><div class="postactions"><button data-action="like" data-id="${esc(p.id)}" class="${p.likes.some(l=>l.user_id===user.id)?"liked":""}"><i class="fa fa-thumbs-up"></i> Like</button><button data-action="focus" data-id="${esc(p.id)}"><i class="fa fa-comment"></i> Comment</button></div><div class="reel-caption">${p.comments.length} comments</div><form class="commentform" data-id="${esc(p.id)}"><input name="comment" maxlength="2000" placeholder="Add a comment..." required><button>Send</button></form></article>`).join('')+'</div>';
+  return;
+ }
  if(!list.length){$("feed").innerHTML='<div class="card empty">No posts to show yet.</div>';return;}
  $("feed").innerHTML=list.map(p=>{
   const liked=p.likes.some(l=>l.user_id===user.id);
